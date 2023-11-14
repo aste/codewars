@@ -1,1 +1,1 @@
-let regex = //
+let regex = /{a}/;
