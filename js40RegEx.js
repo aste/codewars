@@ -1,1 +1,1 @@
-const regex = /https?:\/\/(?!https?:\/\/)[\w.-]+[^\W_](\.com|\.net)/gi;
+const regex= /https?:\/\/[a-z0-9.]+\.(?:com|net)/gi
