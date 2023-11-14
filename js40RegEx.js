@@ -1,1 +1,1 @@
-var regex=//
+let regex = //
