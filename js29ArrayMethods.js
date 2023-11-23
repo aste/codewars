@@ -1,9 +1,6 @@
 function bigToSmall(arr) {
-  const sortOrder = (a, b) => (a > b ? -1 : 0);
-  const combinedArr = [];
-
-  return combinedArr
+  return []
     .concat(...arr)
-    .sort(sortOrder)
+    .sort((a, b) => b - a)
     .join(">");
 }
