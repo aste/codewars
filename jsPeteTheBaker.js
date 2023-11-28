@@ -18,5 +18,3 @@ function cakes(recipe, available) {
 
   return maxCakes;
 }
-
-// console.log(cakes(recipe, available), 2);
