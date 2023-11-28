@@ -1,0 +1,1 @@
+const inArray = (arr1, arr2) => arr1.filter((el1) => arr2.some((el2) => el2.includes(el1))).sort()
