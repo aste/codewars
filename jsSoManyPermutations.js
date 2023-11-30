@@ -1,22 +1,30 @@
-// DESCRIPTION:
-// In this kata, your task is to create all permutations of a non-empty input string and remove duplicates, if present.
+function permutations(string) {
+  if (string.length === 0) return [""];
+  if (string.length === 1) return [string];
 
-// Create as many "shufflings" as you can!
+  const uniquePermutations = new Set();
 
-// Examples:
+  // Iterate over each character in the string
+  for (let i = 0; i < string.length; i++) {
+    // Current character from which to create permutations
+    const currentLetter = string[i];
 
-// With input 'a':
-// Your function should return: ['a']
+    // The remaining characters without the current character
+    const remainingLetters = string.slice(0, i) + string.slice(i + 1);
 
-// With input 'ab':
-// Your function should return ['ab', 'ba']
+    // Call the permutations function recursively on the remaining characters
+    const remainingLettersPermuted = permutations(remainingLetters);
 
-// With input 'abc':
-// Your function should return ['abc','acb','bac','bca','cab','cba']
+    // Iterate over all permutation returned from the recursive call
+    for (let permutedString of remainingLettersPermuted) {
+      // Add the current char as the first character of each permutation, 
+      // then add to the permutation the Set to exclude non-unique values
+      allPermutations.push(currentLetter + permutedString);
+      uniquePermutations.add(currentLetter + permutedString);
+    }
+  }
 
-// With input 'aabb':
-// Your function should return ['aabb', 'abab', 'abba', 'baab', 'baba', 'bbaa']
-// Note: The order of the permutations doesn't matter.
+  return Array.from(uniquePermutations);
+}
 
-// Good luck!
-
+console.log(permutations("abba"));
