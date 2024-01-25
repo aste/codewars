@@ -1,4 +1,31 @@
 Array.prototype.sameStructureAs = function (other) {
+
+  let thisInt = 0;
+  let otherInt = 0;
+
+  let thisCompare = [];
+  let otherCompare = [];
+
+  function unfoldArray(arr, arrToAppendTo, counter = 0) {
+    for (element in arr) {
+      if (Array.isArray(element)) {
+        let newCounter = counter + 1;
+        unfoldArray(element, arrToAppendTo, newCounter);
+      } else {
+        arrToAppendTo.push(counter);
+        console.log(`counter is: ${counter}`);
+      }
+    }
+  }
+
+  unfoldArray(this, thisCompare);
+  unfoldArray(other, otherCompare);
+
+  console.log(thisCompare);
+  console.log(otherCompare);
+
+  console.log("");
+
   // Return 'true' if and only if 'other' has the same
   // nesting structure as 'this'.
   // Note: You are given a function isArray(o) that returns
@@ -10,8 +37,8 @@ Array.prototype.sameStructureAs = function (other) {
 // For example:
 
 //  // should return true
-// [ 1, 1, 1 ].sameStructureAs( [ 2, 2, 2 ] );
-// [ 1, [ 1, 1 ] ].sameStructureAs( [ 2, [ 2, 2 ] ] );
+// [1, 1, 1].sameStructureAs([2, 2, 2]);
+// [1, [1, 1]].sameStructureAs([2, [2, 2]]);
 
 //  // should return false
 // [ 1, [ 1, 1 ] ].sameStructureAs( [ [ 2, 2 ], 2 ] );
