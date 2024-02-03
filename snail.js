@@ -1,12 +1,27 @@
 // Given an n x n array, return the array elements arranged from outermost elements to the middle element, traveling clockwise.
 
-
-
 snail = function (array) {
-  return array;
+  let grid = array;
+  let gridLength = array.length;
+
+  if (!gridLength) return grid[0];
+  if (gridLength === 1) return grid;
+
+  let firstRow = grid.shift();
+  let thirdRow = grid.pop().reverse();
+
+  if (gridLength === 2) return firstRow.concat(thirdRow);
+
+  let secondColumn = [];
+  let fourthColumn = [];
+
+  for (let i = 0; i < grid.length; i++) {
+    secondColumn.push(grid[i].pop());
+    fourthColumn.unshift(grid[i].shift());
+  }
+
+  return firstRow.concat(secondColumn, thirdRow, fourthColumn, snail(grid).flat());
 };
-
-
 
 // Test cases
 console.log("");
@@ -26,6 +41,17 @@ console.log("----------------------array3----------------------");
 console.log("");
 console.log(
   snail([
+    [1, 2],
+    [3, 4],
+  ])
+);
+console.log([1, 2, 4, 3]);
+
+console.log("");
+console.log("----------------------array4----------------------");
+console.log("");
+console.log(
+  snail([
     [1, 2, 3],
     [4, 5, 6],
     [7, 8, 9],
@@ -34,7 +60,7 @@ console.log(
 console.log([1, 2, 3, 6, 9, 8, 7, 4, 5]);
 
 console.log("");
-console.log("----------------------array4----------------------");
+console.log("----------------------array5----------------------");
 console.log("");
 console.log(
   snail([
@@ -50,7 +76,7 @@ console.log([
 ]);
 
 console.log("");
-console.log("----------------------array5----------------------");
+console.log("----------------------array6----------------------");
 console.log("");
 
 console.log(
