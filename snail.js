@@ -2,8 +2,7 @@ snail = function (array) {
   let grid = array;
   let gridLength = array.length;
 
-  if (!gridLength) return grid[0];
-  if (gridLength === 1) return grid;
+  if (gridLength === 0 || gridLength === 1) return grid[0];
 
   let firstRow = grid.shift();
   let thirdRow = grid.pop().reverse();
