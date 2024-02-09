@@ -137,32 +137,3 @@ function parseInt(string) {
 
   return total;
 }
-
-let testStr = "three million eight hundred eighty-five thousand eight hundred and fourteen";
-
-parseInt(testStr);
-
-//   Additional Notes:
-//   The minimum number is "zero" (inclusively)
-//   The magnitudeimum number, which must be supported is 1 million (inclusively)
-//   The "and" in e.g. "one hundred and twenty-four" is optional, in some cases it's present and in others it's not
-//   All tested numbers are valid, you don't need to validate them
-
-// Test cases:
-console.log(`${parseInt("one")}`);
-console.log("1");
-console.log("");
-console.log(`${parseInt("twenty")}`);
-console.log("20");
-console.log("");
-console.log(`${parseInt("two hundred forty-six")}`);
-console.log("246");
-console.log("");
-console.log(`${parseInt("seven hundred eighty-three thousand nine hundred and nineteen")}`);
-console.log("783919");
-console.log("");
-console.log(
-  `${parseInt("three million eight hundred eighty-five thousand eight hundred and fourteen")}`
-);
-console.log("3885814");
-console.log("");
