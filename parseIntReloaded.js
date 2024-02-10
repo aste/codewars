@@ -120,7 +120,7 @@ function parseInt(string) {
 
   for (let i = 0; i < strOfAllNumbers.length; i++) {
     let currentVal = strOfAllNumbers[i];
-    console.log(`currentVal ${currentVal}`);
+
     if (lastVal > currentVal || tempCalVal === 0) {
       tempCalVal = tempCalVal + currentVal;
     } else {
