@@ -1,5 +1,3 @@
-//   DESCRIPTION:
-//   In this kata we want to convert a string into an integer. The strings simply represent the numbers in numbers.
 const numbers = {
   zero: 0,
   one: 1,
@@ -39,44 +37,10 @@ const magnitudes = {
 
 function parseInt(string) {
   return string.split(/ |-/).reduce((accumulator, currentVal) => {
-    console.log(`currentVal ${currentVal}`);
-    console.log(`accumulator ${accumulator}`);
-    if (numbers[currentVal])
-      if (magnitudes[currentVal]) console.log(`magnitudes[currentVal] ${magnitudes[currentVal]}`);
-    if (numbers[currentVal]) {
-      accumulator += numbers[currentVal];
-    }
-    if (magnitudes[currentVal]) {
-      console.log(`accumulator % magnitudes[currentVal] ${accumulator % magnitudes[currentVal]}`);
-      accumulator +=
-        magnitudes[currentVal] * (accumulator % magnitudes[currentVal]) -
-        (accumulator % magnitudes[currentVal]);
-    }
-    console.log(`accumulator ${accumulator}`);
-    console.log(``);
+    const curNum = numbers[currentVal];
+    const curMag = magnitudes[currentVal];
+    if (curNum) accumulator += curNum;
+    if (curMag) accumulator += curMag * (accumulator % curMag) - (accumulator % curMag);
     return accumulator;
   }, 0);
 }
-
-let testStr = "three million eight hundred eighty-five thousand eight hundred and fourteen";
-
-parseInt(testStr);
-
-// Test cases:
-console.log(`${parseInt("one")}`);
-console.log("1");
-console.log("");
-console.log(`${parseInt("twenty")}`);
-console.log("20");
-console.log("");
-console.log(`${parseInt("two hundred forty-six")}`);
-console.log("246");
-console.log("");
-console.log(`${parseInt("seven hundred eighty-three thousand nine hundred and nineteen")}`);
-console.log("783919");
-console.log("");
-console.log(
-  `${parseInt("three million eight hundred eighty-five thousand eight hundred and fourteen")}`
-);
-console.log("3885814");
-console.log("");
