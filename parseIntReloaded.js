@@ -23,94 +23,21 @@ const numbers = {
   eighteen: 18,
   nineteen: 19,
   twenty: 20,
-  "twenty-one": 21,
-  "twenty-two": 22,
-  "twenty-three": 23,
-  "twenty-four": 24,
-  "twenty-five": 25,
-  "twenty-six": 26,
-  "twenty-seven": 27,
-  "twenty-eight": 28,
-  "twenty-nine": 29,
   thirty: 30,
-  "thirty-one": 31,
-  "thirty-two": 32,
-  "thirty-three": 33,
-  "thirty-four": 34,
-  "thirty-five": 35,
-  "thirty-six": 36,
-  "thirty-seven": 37,
-  "thirty-eight": 38,
-  "thirty-nine": 39,
   forty: 40,
-  "forty-one": 41,
-  "forty-two": 42,
-  "forty-three": 43,
-  "forty-four": 44,
-  "forty-five": 45,
-  "forty-six": 46,
-  "forty-seven": 47,
-  "forty-eight": 48,
-  "forty-nine": 49,
   fifty: 50,
-  "fifty-one": 51,
-  "fifty-two": 52,
-  "fifty-three": 53,
-  "fifty-four": 54,
-  "fifty-five": 55,
-  "fifty-six": 56,
-  "fifty-seven": 57,
-  "fifty-eight": 58,
-  "fifty-nine": 59,
   sixty: 60,
-  "sixty-one": 61,
-  "sixty-two": 62,
-  "sixty-three": 63,
-  "sixty-four": 64,
-  "sixty-five": 65,
-  "sixty-six": 66,
-  "sixty-seven": 67,
-  "sixty-eight": 68,
-  "sixty-nine": 69,
   seventy: 70,
-  "seventy-one": 71,
-  "seventy-two": 72,
-  "seventy-three": 73,
-  "seventy-four": 74,
-  "seventy-five": 75,
-  "seventy-six": 76,
-  "seventy-seven": 77,
-  "seventy-eight": 78,
-  "seventy-nine": 79,
   eighty: 80,
-  "eighty-one": 81,
-  "eighty-two": 82,
-  "eighty-three": 83,
-  "eighty-four": 84,
-  "eighty-five": 85,
-  "eighty-six": 86,
-  "eighty-seven": 87,
-  "eighty-eight": 88,
-  "eighty-nine": 89,
   ninety: 90,
-  "ninety-one": 91,
-  "ninety-two": 92,
-  "ninety-three": 93,
-  "ninety-four": 94,
-  "ninety-five": 95,
-  "ninety-six": 96,
-  "ninety-seven": 97,
-  "ninety-eight": 98,
-  "ninety-nine": 99,
   hundred: 100,
   thousand: 1000,
   million: 1000000,
-  and: null,
 };
 
 function parseInt(string) {
   let strOfAllNumbers = string
-    .split(" ")
+    .split(/ |-/)
     .map((word) => numbers[word])
     .filter(Boolean);
 
@@ -137,3 +64,32 @@ function parseInt(string) {
 
   return total;
 }
+
+let testStr = "three million eight hundred eighty-five thousand eight hundred and fourteen";
+
+parseInt(testStr);
+
+//   Additional Notes:
+//   The minimum number is "zero" (inclusively)
+//   The magnitudeimum number, which must be supported is 1 million (inclusively)
+//   The "and" in e.g. "one hundred and twenty-four" is optional, in some cases it's present and in others it's not
+//   All tested numbers are valid, you don't need to validate them
+
+// Test cases:
+console.log(`${parseInt("one")}`);
+console.log("1");
+console.log("");
+console.log(`${parseInt("twenty")}`);
+console.log("20");
+console.log("");
+console.log(`${parseInt("two hundred forty-six")}`);
+console.log("246");
+console.log("");
+console.log(`${parseInt("seven hundred eighty-three thousand nine hundred and nineteen")}`);
+console.log("783919");
+console.log("");
+console.log(
+  `${parseInt("three million eight hundred eighty-five thousand eight hundred and fourteen")}`
+);
+console.log("3885814");
+console.log("");
