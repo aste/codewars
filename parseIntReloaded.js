@@ -1,4 +1,4 @@
-const numbers = {
+const num = {
   zero: 0,
   one: 1,
   two: 2,
@@ -29,18 +29,16 @@ const numbers = {
   ninety: 90,
 };
 
-const magnitudes = {
+const mag = {
   hundred: 100,
   thousand: 1000,
   million: 1000000,
 };
 
 function parseInt(string) {
-  return string.split(/ |-/).reduce((accumulator, currentVal) => {
-    const curNum = numbers[currentVal];
-    const curMag = magnitudes[currentVal];
-    if (curNum) accumulator += curNum;
-    if (curMag) accumulator += curMag * (accumulator % curMag) - (accumulator % curMag);
-    return accumulator;
+  return string.split(/ |-/).reduce((accum, curVal) => {
+    if (num[curVal]) accum += num[curVal];
+    if (mag[curVal]) accum += mag[curVal] * (accum % mag[curVal]) - (accum % mag[curVal]);
+    return accum;
   }, 0);
 }
