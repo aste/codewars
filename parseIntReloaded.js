@@ -1,6 +1,5 @@
 //   DESCRIPTION:
-//   In this kata we want to convert a string into an integer. The strings simply represent the numbers in words.
-
+//   In this kata we want to convert a string into an integer. The strings simply represent the numbers in numbers.
 const numbers = {
   zero: 0,
   one: 1,
@@ -30,50 +29,38 @@ const numbers = {
   seventy: 70,
   eighty: 80,
   ninety: 90,
+};
+
+const magnitudes = {
   hundred: 100,
   thousand: 1000,
   million: 1000000,
 };
 
 function parseInt(string) {
-  let strOfAllNumbers = string
-    .split(/ |-/)
-    .map((word) => numbers[word])
-    .filter(Boolean);
-
-  let total = 0;
-  let lastVal = 0;
-  let tempCalVal = 0;
-
-  for (let i = 0; i < strOfAllNumbers.length; i++) {
-    let currentVal = strOfAllNumbers[i];
-
-    if (lastVal > currentVal || tempCalVal === 0) {
-      tempCalVal = tempCalVal + currentVal;
-    } else {
-      tempCalVal = tempCalVal * currentVal;
+  return string.split(/ |-/).reduce((accumulator, currentVal) => {
+    console.log(`currentVal ${currentVal}`);
+    console.log(`accumulator ${accumulator}`);
+    if (numbers[currentVal])
+      if (magnitudes[currentVal]) console.log(`magnitudes[currentVal] ${magnitudes[currentVal]}`);
+    if (numbers[currentVal]) {
+      accumulator += numbers[currentVal];
     }
-
-    if (currentVal === 1000000 || currentVal === 1000 || i === strOfAllNumbers.length - 1) {
-      total += tempCalVal;
-      tempCalVal = 0;
+    if (magnitudes[currentVal]) {
+      console.log(`accumulator % magnitudes[currentVal] ${accumulator % magnitudes[currentVal]}`);
+      accumulator +=
+        magnitudes[currentVal] * (accumulator % magnitudes[currentVal]) -
+        (accumulator % magnitudes[currentVal]);
     }
-
-    lastVal = currentVal;
-  }
-
-  return total;
+    console.log(`accumulator ${accumulator}`);
+    console.log(``);
+    return accumulator;
+  }, 0);
 }
 
 let testStr = "three million eight hundred eighty-five thousand eight hundred and fourteen";
 
 parseInt(testStr);
-
-//   Additional Notes:
-//   The minimum number is "zero" (inclusively)
-//   The magnitudeimum number, which must be supported is 1 million (inclusively)
-//   The "and" in e.g. "one hundred and twenty-four" is optional, in some cases it's present and in others it's not
-//   All tested numbers are valid, you don't need to validate them
 
 // Test cases:
 console.log(`${parseInt("one")}`);
