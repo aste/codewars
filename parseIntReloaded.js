@@ -36,9 +36,9 @@ const mag = {
 };
 
 function parseInt(string) {
-  return string.split(/ |-/).reduce((accum, curVal) => {
-    if (num[curVal]) accum += num[curVal];
-    if (mag[curVal]) accum += mag[curVal] * (accum % mag[curVal]) - (accum % mag[curVal]);
-    return accum;
+  return string.split(/ |-/).reduce((acc, curVal) => {
+    if (num[curVal]) acc += num[curVal];
+    if (mag[curVal]) acc += mag[curVal] * (acc % mag[curVal]) - (acc % mag[curVal]);
+    return acc;
   }, 0);
 }
