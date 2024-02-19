@@ -1,4 +1,23 @@
 function treeByLevels(rootNode) {
+  const sortedTreeByLvlsArr = [];
+  const nodeQueue = [];
+
+  if (rootNode?.value) nodeQueue.push(rootNode);
+
+  while (nodeQueue.length != 0) {
+    if (nodeQueue[0]?.left && nodeQueue[0]?.right) {
+    }
+
+    if (rootNode?.left && rootNode?.right) {
+      sortedTreeByLvlsArr.push(rootNode.left.value, rootNode.right.value);
+    }
+  }
+
+  if (rootNode?.left && rootNode?.right) {
+  } else if (rootNode?.left) {
+  } else if (rootNode?.right) {
+  }
+
   return [];
 }
 
