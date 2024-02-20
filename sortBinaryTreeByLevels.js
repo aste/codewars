@@ -1,24 +1,17 @@
 function treeByLevels(rootNode) {
-  const sortedTreeByLvlsArr = [];
+  const sortedByLevels = [];
   const nodeQueue = [];
 
-  if (rootNode?.value) nodeQueue.push(rootNode);
+  if (typeof rootNode?.value !== "undefined") nodeQueue.push(rootNode);
 
-  while (nodeQueue.length != 0) {
-    if (nodeQueue[0]?.left && nodeQueue[0]?.right) {
-    }
-
-    if (rootNode?.left && rootNode?.right) {
-      sortedTreeByLvlsArr.push(rootNode.left.value, rootNode.right.value);
-    }
+  while (nodeQueue.length > 0) {
+    if (typeof nodeQueue[0]?.value !== "undefined") sortedByLevels.push(nodeQueue[0].value);
+    if (nodeQueue[0]?.left) nodeQueue.push(nodeQueue[0].left);
+    if (nodeQueue[0]?.right) nodeQueue.push(nodeQueue[0].right);
+    nodeQueue.shift();
   }
 
-  if (rootNode?.left && rootNode?.right) {
-  } else if (rootNode?.left) {
-  } else if (rootNode?.right) {
-  }
-
-  return [];
+  return sortedByLevels;
 }
 
 // You are given a binary tree:
