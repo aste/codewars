@@ -32,13 +32,3 @@ function mix(s1, s2) {
 
   return mixResult.filter((el) => el.length > 3).map(el => el.replace("3", '=')).join("/");
 }
-
-let s1 = "my&friend&Paul has heavy hats! &";
-let s2 = "my friend John has many many friends &";
-
-console.log(mix(s1, s2));
-
-// Sort in decreasing order of their length
-// In cases of equal length, sort in ascending lexicographic order (letters and digits - more precisely sorted by codepoint
-// The different groups will be separated by '/'. See examples and "Example Tests".
-// "2:nnnnn/1:aaaa/1:hhh/2:mmm/2:yyy/2:dd/2:ff/2:ii/2:rr/=:ee/=:ss"
