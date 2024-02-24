@@ -1,32 +1,55 @@
 function whoIsWinner(piecesPositionList) {
   let winner = "Draw";
+  let foundWinner = false;
   const connectFourBoard = { A: [], B: [], C: [], D: [], E: [], F: [], G: [] };
 
+  function findFourInARow(arr) {
+    for (let i = 0; i <= arr.length - 4; i++) {
+      if (
+        arr[i] !== undefined &&
+        arr[i] !== null &&
+        arr[i] === arr[i + 1] &&
+        arr[i + 1] === arr[i + 2] &&
+        arr[i + 2] === arr[i + 3]
+      ) {
+        winner = arr[i];
+        foundWinner = true;
+      }
+    }
+  }
+
+  // Place each piece one-by-one according to piecesPositionList
   for (let i = 0; i < piecesPositionList.length; i++) {
     const currentMove = piecesPositionList[i].split("_");
+
     connectFourBoard[currentMove[0]].push(currentMove[1]);
 
     if (i < 6) continue;
 
     const currentBoard = Object.values(connectFourBoard);
 
+    // check for win in vertical direction
     for (let i = 0; i < currentBoard.length; i++) {
-      const curCol = currentBoard[i];
+      const verticalColumn = currentBoard[i];
+      console.log(verticalColumn);
 
-      if (curCol.length < 4) continue;
-
-      for (let i = 0; i < curCol.length - 3; i++) {
-        if (
-          curCol[i] === curCol[i + 1] &&
-          curCol[i + 1] === curCol[i + 2] &&
-          curCol[i + 2] === curCol[i + 3]
-        ) {
-          winner = curCol[i];
-          console.log(`Winner is ${winner} congratulation`);
-          break;
-        }
-      }
+      if (verticalColumn.length >= 4) findFourInARow(verticalColumn);
+      if (foundWinner) break;
     }
+
+    if (foundWinner) break;
+
+    // check for win in horizontal direction
+    for (let row = 0; row < 6; row++) {
+      let currentRow = [];
+      for (const col of currentBoard) {
+        currentRow.push(col[row] || null);
+      }
+      if (currentRow.length >= 4) findFourInARow(currentRow);
+      if (foundWinner) break;
+    }
+
+    if (foundWinner) break;
   }
 
   console.log(winner);
