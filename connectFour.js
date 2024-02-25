@@ -3,7 +3,7 @@ function whoIsWinner(piecesPositionList) {
   let foundWinner = false;
   const connectFourBoard = { A: [], B: [], C: [], D: [], E: [], F: [], G: [] };
 
-  function findFourInARow(arr) {
+  function checkFourRepWin(arr) {
     for (let i = 0; i <= arr.length - 4; i++) {
       if (
         arr[i] &&
@@ -13,17 +13,18 @@ function whoIsWinner(piecesPositionList) {
       ) {
         winner = arr[i];
         foundWinner = true;
+        break;
       }
     }
   }
 
-  function checkForRowWin(currentBoard) {
+  function checkFourRowWin(currentBoard) {
     for (let row = 0; row < 6; row++) {
       let currentRow = [];
       for (const col of currentBoard) {
         currentRow.push(col[row] || null);
       }
-      if (currentRow.length >= 4) findFourInARow(currentRow);
+      if (currentRow.length >= 4) checkFourRepWin(currentRow);
       if (foundWinner) break;
     }
   }
@@ -34,48 +35,59 @@ function whoIsWinner(piecesPositionList) {
 
     connectFourBoard[currentMove[0]].push(currentMove[1]);
 
-    if (move < 6) continue;
+    if (move < 5) continue;
 
+    // Build Current Board
     const currentBoard = Object.values(connectFourBoard);
-    const diagonalUpBoard = currentBoard.map((col) => [...col]);
-    const diagonalDownBoard = currentBoard.map((col) => [...col]);
+
+    // Current Board Test Log
+    const testPrint = Object.entries(connectFourBoard).reduce((acc, [key, val]) => {
+      acc[key] = val.map((el) => {
+        if (el === "Red") return "R";
+        if (el === "Yellow") return "Y";
+        return el;
+      });
+      return acc;
+    }, {});
+
+    console.log(testPrint);
+    console.log("");
 
     // check for win in vertical direction
     for (let col = 0; col < currentBoard.length; col++) {
       const verticalColumn = currentBoard[col];
-
-      if (verticalColumn.length >= 4) {
-        findFourInARow(verticalColumn);
-      }
-      if (foundWinner) break;
+      if (verticalColumn.length >= 4) checkFourRepWin(verticalColumn);
     }
 
     if (foundWinner) break;
 
     // check for win in horizontal direction
-    checkForRowWin(currentBoard);
-
+    checkFourRowWin(currentBoard);
     if (foundWinner) break;
 
     // Build diagonal boards
-    for (let i = 0; i < currentBoard.length; i++) {
-      let numberOfNullsToShift = i;
+    const diagonalUpBoard = currentBoard.map((col) => [...col]);
+    const diagonalDownBoard = currentBoard.map((col) => [...col]);
 
-      for (let j = 0; j < numberOfNullsToShift; j++) {
+    for (let i = 0; i < currentBoard.length; i++) {
+      let numberToShiftColumn = i;
+
+      for (let j = 0; j < numberToShiftColumn; j++) {
         diagonalUpBoard[currentBoard.length - 1 - i].unshift(null);
         diagonalDownBoard[i].unshift(null);
       }
-
       diagonalUpBoard[i].splice(7);
+      if (diagonalUpBoard.length === 7) diagonalUpBoard[i].splice(0, 3);
       diagonalDownBoard[i].splice(7);
+      if (diagonalDownBoard.length === 7) diagonalDownBoard[i].splice(0, 3);
     }
 
     // check for win in diagonal up direction
-    checkForRowWin(diagonalUpBoard);
+    checkFourRowWin(diagonalUpBoard);
     if (foundWinner) break;
 
     // check for win in diagonal up direction
-    checkForRowWin(diagonalDownBoard);
+    checkFourRowWin(diagonalDownBoard);
     if (foundWinner) break;
   }
 
