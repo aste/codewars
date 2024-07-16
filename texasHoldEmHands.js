@@ -29,9 +29,8 @@ function hand(holeCards, communityCards) {
 
   const fullFlushHand = (sortedHandArrOfObj) => {
     const potentialFlushArr = [...sortedHandArrOfObj];
-    console.log(potentialFlushArr);
     if (potentialFlushArr.length === 0) {
-      return;
+      return [];
     }
     const suitCount = {};
     let flushSuit;
@@ -53,11 +52,10 @@ function hand(holeCards, communityCards) {
     return potentialFlushArr.filter((card) => card.suit === flushSuit);
   };
 
-  const straightHand = (sortedHandArrOfObj) => {
+  const highestStraightHand = (sortedHandArrOfObj) => {
     const potentialStraightArr = [...sortedHandArrOfObj];
-    console.log(potentialStraightArr);
     if (potentialStraightArr.length === 0) {
-      return;
+      return [];
     }
     let straightArr = [];
     let prevCardRank = potentialStraightArr[0].rank + 1;
@@ -106,11 +104,56 @@ function hand(holeCards, communityCards) {
     return bestComboArr.slice(0, 5);
   };
 
+  const reformatWin = (winningArr) => {
+    return winningArr.map((card) => {
+      if (card === 14) {
+        return "A";
+      } else if (card === 13) {
+        return "K";
+      } else if (card === 12) {
+        return "Q";
+      } else if (card === 11) {
+        return "J";
+      } else {
+        return card.toString();
+      }
+    });
+  };
+
   const bestPossibleHand = { type: "nothing", ranks: [] };
   const fullHandArr = holeCards.concat(communityCards);
   const currentHandSortedArrOfObj = remapRankToSortedValues(fullHandArr);
 
 
+  //            (Straight && Flush)   + [Rank]
+  const flushArr = fullFlushHand(currentHandSortedArrOfObj);
+  const straightFlush = highestStraightHand(flushArr);
+
+  if (straightFlush.length === 5) {
+    bestPossibleHand.type = "straight-flush";
+    bestPossibleHand.ranks = reformatWin(straightFlush.map((card) => card.rank));
+    return bestPossibleHand;
+  }
+
+  const bestHand = bestComboHand(currentHandSortedArrOfObj);
+  // Four-of-a-kind           (Quads)               + [Rank]
+  if (
+    bestHand[0].rank === bestHand[1].rank &&
+    bestHand[1].rank === bestHand[2].rank &&
+    bestHand[2].rank === bestHand[3].rank
+  ) {
+    return { type: "four-of-a-kind ", ranks: reformatWin([bestHand[0].rank, bestHand[4].rank]) };
+  }
+
+  // Full house               (Trips & Pair)        + [Rank]
+
+  // Flush                    (Flush)               + [Rank]
+  // Straight                (Straight)             + [Rank]
+
+  // Three-of-a-kind          (Trips)               + [Rank]
+  // Two pair                 (Pair & Pair)         + [Rank]
+  // Pair                     (Pair)                + [Rank]
+  // Nothing                  (Nothing)             + [Rank]
 
   return bestPossibleHand;
   //   return { type: "nothing", ranks: [] };
