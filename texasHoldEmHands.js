@@ -1,8 +1,4 @@
 function hand(holeCards, communityCards) {
-  const bestPossibleHand = { type: "nothing", ranks: [] };
-
-  const fullHand = holeCards.concat(communityCards);
-
   const remapRankToSortedValues = (hand) => {
     const arrOfHandObjects = [];
 
@@ -31,39 +27,92 @@ function hand(holeCards, communityCards) {
     return arrOfHandObjects.sort((a, b) => b.rank - a.rank);
   };
 
-  const currentHand = remapRankToSortedValues(fullHand);
+  const fullFlushHand = (sortedHandArrOfObj) => {
+    const potentialFlushArr = [...sortedHandArrOfObj];
+    console.log(potentialFlushArr);
+    if (potentialFlushArr.length === 0) {
+      return;
+    }
+    const suitCount = {};
+    let flushSuit;
 
+    potentialFlushArr.forEach((card) => {
+      suitCount[card.suit] ? suitCount[card.suit]++ : (suitCount[card.suit] = 1);
+    });
 
-  const fullFlushHand = (currentHand) => {
-    const count = {};
+    for (const [key, value] of Object.entries(suitCount)) {
+      if (value >= 5) {
+        flushSuit = key;
+      }
+    }
+
+    if (potentialFlushArr.length < 5) {
+      potentialFlushArr = [];
+    }
+
+    return potentialFlushArr.filter((card) => card.suit === flushSuit);
   };
 
-  const straightHand = () => {
-    const count = {};
+  const straightHand = (sortedHandArrOfObj) => {
+    const potentialStraightArr = [...sortedHandArrOfObj];
+    console.log(potentialStraightArr);
+    if (potentialStraightArr.length === 0) {
+      return;
+    }
+    let straightArr = [];
+    let prevCardRank = potentialStraightArr[0].rank + 1;
+
+    for (let i = 0; i < potentialStraightArr.length; i++) {
+      if (potentialStraightArr[i].rank === prevCardRank - 1) {
+        straightArr.push(potentialStraightArr[i]);
+        prevCardRank = potentialStraightArr[i].rank;
+        if (straightArr.length === 5) {
+          break;
+        }
+      } else if (potentialStraightArr[i] === prevCardRank) {
+        continue;
+      } else {
+        straightArr = [];
+        prevCardRank = potentialStraightArr[i].rank;
+      }
+    }
+
+    if (straightArr.length < 5) {
+      straightArr = [];
+    }
+
+    return straightArr;
   };
 
-  const rankCheck = () => {};
+  const bestComboHand = (sortedHandArrOfObj) => {
+    const bestComboArr = [...sortedHandArrOfObj];
+    if (bestComboArr.length === 0) {
+      return;
+    }
 
-  let flush;
-  let quads;
-  let trips;
-  let straight;
-  let pair;
+    const rankFrequency = bestComboArr.reduce((acc, card) => {
+      acc[card.rank] = (acc[card.rank] || 0) + 1;
+      return acc;
+    }, {});
 
-  // Straight-flush           (Straight && Flush)   + [Rank]
+    bestComboArr.sort((a, b) => {
+      if (rankFrequency[b.rank] !== rankFrequency[a.rank]) {
+        return rankFrequency[b.rank] - rankFrequency[a.rank];
+      }
 
-  // Four-of-a-kind           (Quads)               + [Rank]
-  // Full house               (Trips & Pair)        + [Rank]
+      return b.rank - a.rank;
+    });
 
-  // Flush                    (Flush)               + [Rank]
+    return bestComboArr.slice(0, 5);
+  };
 
-  // Straight                 (Straight)            + [Rank]
-  // Three-of-a-kind          (Trips)               + [Rank]
-  // Two pair                 (Pair & Pair)         + [Rank]
-  // Pair                     (Pair)                + [Rank]
-  // Nothing                  (Nothing)             + [Rank]
+  const bestPossibleHand = { type: "nothing", ranks: [] };
+  const fullHandArr = holeCards.concat(communityCards);
+  const currentHandSortedArrOfObj = remapRankToSortedValues(fullHandArr);
 
-  return bestPossibleHand
+
+
+  return bestPossibleHand;
   //   return { type: "nothing", ranks: [] };
 }
 
