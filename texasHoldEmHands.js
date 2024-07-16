@@ -67,10 +67,8 @@ function hand(holeCards, communityCards) {
         if (straightArr.length === 5) {
           break;
         }
-      } else if (potentialStraightArr[i] === prevCardRank) {
-        continue;
-      } else {
-        straightArr = [];
+      } else if (potentialStraightArr[i].rank !== prevCardRank) {
+        straightArr = [potentialStraightArr[i]];
         prevCardRank = potentialStraightArr[i].rank;
       }
     }
@@ -135,28 +133,28 @@ function hand(holeCards, communityCards) {
     };
   }
 
-  const bestHandArr = bestComboHand(currentHandSortedArrOfObj);
+  const bestCombArr = bestComboHand(currentHandSortedArrOfObj);
   // Four-of-a-kind
   if (
-    bestHandArr[0].rank === bestHandArr[1].rank &&
-    bestHandArr[1].rank === bestHandArr[2].rank &&
-    bestHandArr[2].rank === bestHandArr[3].rank
+    bestCombArr[0].rank === bestCombArr[1].rank &&
+    bestCombArr[1].rank === bestCombArr[2].rank &&
+    bestCombArr[2].rank === bestCombArr[3].rank
   ) {
     return {
       type: "four-of-a-kind",
-      ranks: reformatWinRankArr([bestHandArr[0].rank, bestHandArr[4].rank]),
+      ranks: reformatWinRankArr([bestCombArr[0].rank, bestCombArr[4].rank]),
     };
   }
 
   // Full house
   if (
-    bestHandArr[0].rank === bestHandArr[1].rank &&
-    bestHandArr[1].rank === bestHandArr[2].rank &&
-    bestHandArr[3].rank === bestHandArr[4].rank
+    bestCombArr[0].rank === bestCombArr[1].rank &&
+    bestCombArr[1].rank === bestCombArr[2].rank &&
+    bestCombArr[3].rank === bestCombArr[4].rank
   ) {
     return {
       type: "full house",
-      ranks: reformatWinRankArr([bestHandArr[0].rank, bestHandArr[4].rank]),
+      ranks: reformatWinRankArr([bestCombArr[0].rank, bestCombArr[4].rank]),
     };
   }
 
@@ -179,28 +177,30 @@ function hand(holeCards, communityCards) {
   }
 
   // Three-of-a-kind
-  if (bestHandArr[0].rank === bestHandArr[1].rank && bestHandArr[1].rank === bestHandArr[2].rank) {
+  if (bestCombArr[0].rank === bestCombArr[1].rank && bestCombArr[1].rank === bestCombArr[2].rank) {
     return {
       type: "three-of-a-kind",
-      ranks: reformatWinRankArr([bestHandArr[0].rank, bestHandArr[3].rank, bestHandArr[4].rank]),
+      ranks: reformatWinRankArr([bestCombArr[0].rank, bestCombArr[3].rank, bestCombArr[4].rank]),
     };
   }
+
   // Two pair
-  if (bestHandArr[0].rank === bestHandArr[1].rank && bestHandArr[2].rank === bestHandArr[3].rank) {
+  if (bestCombArr[0].rank === bestCombArr[1].rank && bestCombArr[2].rank === bestCombArr[3].rank) {
     return {
       type: "two pair",
-      ranks: reformatWinRankArr([bestHandArr[0].rank, bestHandArr[2].rank, bestHandArr[4].rank]),
+      ranks: reformatWinRankArr([bestCombArr[0].rank, bestCombArr[2].rank, bestCombArr[4].rank]),
     };
   }
+
   // Pair
-  if (bestHandArr[0].rank === bestHandArr[1].rank) {
+  if (bestCombArr[0].rank === bestCombArr[1].rank) {
     return {
       type: "pair",
       ranks: reformatWinRankArr([
-        bestHandArr[0].rank,
-        bestHandArr[2].rank,
-        bestHandArr[3].rank,
-        bestHandArr[4].rank,
+        bestCombArr[0].rank,
+        bestCombArr[2].rank,
+        bestCombArr[3].rank,
+        bestCombArr[4].rank,
       ]),
     };
   }
@@ -209,11 +209,11 @@ function hand(holeCards, communityCards) {
   return {
     type: "nothing",
     ranks: reformatWinRankArr([
-      bestHandArr[0].rank,
-      bestHandArr[1].rank,
-      bestHandArr[2].rank,
-      bestHandArr[3].rank,
-      bestHandArr[4].rank,
+      bestCombArr[0].rank,
+      bestCombArr[1].rank,
+      bestCombArr[2].rank,
+      bestCombArr[3].rank,
+      bestCombArr[4].rank,
     ]),
   };
 }
