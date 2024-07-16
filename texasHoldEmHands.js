@@ -104,8 +104,8 @@ function hand(holeCards, communityCards) {
     return bestComboArr.slice(0, 5);
   };
 
-  const reformatWin = (winningArr) => {
-    return winningArr.map((card) => {
+  const reformatWinRankArr = (winningArr) => {
+    const reformatWinningArr = winningArr.map((card) => {
       if (card === 14) {
         return "A";
       } else if (card === 13) {
@@ -118,45 +118,105 @@ function hand(holeCards, communityCards) {
         return card.toString();
       }
     });
+    return reformatWinningArr;
   };
 
-  const bestPossibleHand = { type: "nothing", ranks: [] };
   const fullHandArr = holeCards.concat(communityCards);
   const currentHandSortedArrOfObj = remapRankToSortedValues(fullHandArr);
 
-
-  //            (Straight && Flush)   + [Rank]
+  // Straight-Flush
   const flushArr = fullFlushHand(currentHandSortedArrOfObj);
-  const straightFlush = highestStraightHand(flushArr);
+  const straightFlushArr = highestStraightHand(flushArr);
 
-  if (straightFlush.length === 5) {
-    bestPossibleHand.type = "straight-flush";
-    bestPossibleHand.ranks = reformatWin(straightFlush.map((card) => card.rank));
-    return bestPossibleHand;
+  if (straightFlushArr.length === 5) {
+    return {
+      type: "straight-flush",
+      ranks: reformatWinRankArr(straightFlushArr.map((card) => card.rank)),
+    };
   }
 
-  const bestHand = bestComboHand(currentHandSortedArrOfObj);
-  // Four-of-a-kind           (Quads)               + [Rank]
+  const bestHandArr = bestComboHand(currentHandSortedArrOfObj);
+  // Four-of-a-kind
   if (
-    bestHand[0].rank === bestHand[1].rank &&
-    bestHand[1].rank === bestHand[2].rank &&
-    bestHand[2].rank === bestHand[3].rank
+    bestHandArr[0].rank === bestHandArr[1].rank &&
+    bestHandArr[1].rank === bestHandArr[2].rank &&
+    bestHandArr[2].rank === bestHandArr[3].rank
   ) {
-    return { type: "four-of-a-kind ", ranks: reformatWin([bestHand[0].rank, bestHand[4].rank]) };
+    return {
+      type: "four-of-a-kind",
+      ranks: reformatWinRankArr([bestHandArr[0].rank, bestHandArr[4].rank]),
+    };
   }
 
-  // Full house               (Trips & Pair)        + [Rank]
+  // Full house
+  if (
+    bestHandArr[0].rank === bestHandArr[1].rank &&
+    bestHandArr[1].rank === bestHandArr[2].rank &&
+    bestHandArr[3].rank === bestHandArr[4].rank
+  ) {
+    return {
+      type: "full house",
+      ranks: reformatWinRankArr([bestHandArr[0].rank, bestHandArr[4].rank]),
+    };
+  }
 
-  // Flush                    (Flush)               + [Rank]
-  // Straight                (Straight)             + [Rank]
+  // Flush
+  if (flushArr.length >= 5) {
+    return {
+      type: "flush",
+      ranks: reformatWinRankArr(flushArr.map((card) => card.rank).slice(0, 5)),
+    };
+  }
 
-  // Three-of-a-kind          (Trips)               + [Rank]
-  // Two pair                 (Pair & Pair)         + [Rank]
-  // Pair                     (Pair)                + [Rank]
-  // Nothing                  (Nothing)             + [Rank]
+  // Straight
+  const straightHand = highestStraightHand(currentHandSortedArrOfObj);
 
-  return bestPossibleHand;
-  //   return { type: "nothing", ranks: [] };
+  if (straightHand.length === 5) {
+    return {
+      type: "straight",
+      ranks: reformatWinRankArr(straightHand.map((card) => card.rank)),
+    };
+  }
+
+  // Three-of-a-kind
+  if (bestHandArr[0].rank === bestHandArr[1].rank && bestHandArr[1].rank === bestHandArr[2].rank) {
+    return {
+      type: "three-of-a-kind",
+      ranks: reformatWinRankArr([bestHandArr[0].rank, bestHandArr[3].rank, bestHandArr[4].rank]),
+    };
+  }
+  // Two pair
+  if (bestHandArr[0].rank === bestHandArr[1].rank && bestHandArr[2].rank === bestHandArr[3].rank) {
+    return {
+      type: "two pair",
+      ranks: reformatWinRankArr([bestHandArr[0].rank, bestHandArr[2].rank, bestHandArr[4].rank]),
+    };
+  }
+  // Pair
+  if (bestHandArr[0].rank === bestHandArr[1].rank) {
+    return {
+      type: "pair",
+      ranks: reformatWinRankArr([
+        bestHandArr[0].rank,
+        bestHandArr[1].rank,
+        bestHandArr[2].rank,
+        bestHandArr[3].rank,
+        bestHandArr[4].rank,
+      ]),
+    };
+  }
+
+  // Nothing
+  return {
+    type: "nothing",
+    ranks: reformatWinRankArr([
+      bestHandArr[0].rank,
+      bestHandArr[1].rank,
+      bestHandArr[2].rank,
+      bestHandArr[3].rank,
+      bestHandArr[4].rank,
+    ]),
+  };
 }
 
 // Hands in descending order of value
