@@ -198,7 +198,6 @@ function hand(holeCards, communityCards) {
       type: "pair",
       ranks: reformatWinRankArr([
         bestHandArr[0].rank,
-        bestHandArr[1].rank,
         bestHandArr[2].rank,
         bestHandArr[3].rank,
         bestHandArr[4].rank,
