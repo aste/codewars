@@ -46,7 +46,12 @@ class Thing {
           if (count === 1) {
             this._properties[prop] = new Thing(prop);
           } else {
-            this._properties[prop] = Array.from({ length: count }, () => new Thing(prop));
+            const children = Array.from({ length: count }, () => new Thing(prop));
+            children.each = function (callback) {
+              this.forEach((child) => callback(child));
+              return this;
+            };
+            this._properties[prop] = children;
           }
           return this;
         },
