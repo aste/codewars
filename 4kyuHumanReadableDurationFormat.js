@@ -1,32 +1,27 @@
 function formatDuration(inputSec) {
-  const durationsInSec = [31536000, 86400, 3600, 60, 1];
-  const durationNames = ["year", "day", "hour", "minute", "second"];
-  
-  let remainingSec = inputSec;
-  let durationString = "";
-
   if (inputSec === 0) {
     return "now";
   }
 
+  const durationsInSec = [31536000, 86400, 3600, 60, 1];
+  const durationNames = ["year", "day", "hour", "minute", "second"];
+
+  let remainingSec = inputSec;
+  const strParts = [];
+
   for (let i = 0; i < durationsInSec.length; i++) {
-    if (durationsInSec[i] <= remainingSec) {
-      let totalUnits = Math.floor(remainingSec / durationsInSec[i]);
-      let pluralMorpheme = totalUnits > 1 ? "s" : "";
-      let serialSign = "";
-
-      remainingSec = remainingSec - totalUnits * durationsInSec[i];
-
-      if (durationString.length === 0) {
-        serialSign = "";
-      } else if (i === durationsInSec.length - 1 || remainingSec === 0) {
-        serialSign = " and ";
-      } else {
-        serialSign = ", ";
-      }
-      durationString += `${serialSign}${totalUnits} ${durationNames[i]}${pluralMorpheme}`;
+    const totalUnits = Math.floor(remainingSec / durationsInSec[i]);
+    if (totalUnits > 0) {
+      remainingSec -= totalUnits * durationsInSec[i];
+      const pluralMorpheme = totalUnits > 1 ? "s" : "";
+      strParts.push(`${totalUnits} ${durationNames[i]}${pluralMorpheme}`);
     }
   }
 
-  return durationString;
+  const lastPart = strParts.pop();
+  if (strParts.length === 0) {
+    return lastPart;
+  }
+
+  return strParts.join(", ") + " and " + lastPart;
 }
