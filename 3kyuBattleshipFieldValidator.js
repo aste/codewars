@@ -67,22 +67,24 @@ function validateBattlefield(board) {
             board[newX][newY] === 1
           ) {
             shipContact = true;
+            if (shipContact) break;
           }
         }
+        if (shipContact) break;
       }
     });
     currentShipCoordinates = [];
   }
 
   for (let x = 0; x < board.length; x++) {
-    if (shipContact) break;
     for (let y = 0; y < board[x].length; y++) {
-      if (shipContact) break;
       if (board[x][y] === 1) {
         updateActualShip(x, y);
         checkContact(currentShipCoordinates);
       }
+      if (shipContact) break;
     }
+    if (shipContact) break;
   }
 
   return compareShips(requiredShips, actualShips) && !shipContact;
