@@ -1,8 +1,7 @@
 function validateBattlefield(board) {
-  // validate the right types and numbers of ships
   let shipContact = false;
+  let currentShipCoordinates = [];
 
-  const currentShipCoordinates = [];
   const requiredShips = {
     4: 1,
     3: 2,
@@ -25,9 +24,11 @@ function validateBattlefield(board) {
     return true;
   }
 
-  const updateActualShip = (xCoord, yCoord) => {
+  function updateActualShip(xCoord, yCoord) {
     let shipLength = 1;
     board[xCoord][yCoord] = 2;
+    currentShipCoordinates.push([xCoord, yCoord]);
+
     let xDirection = board[xCoord + 1][yCoord] === 1;
     let yDirection = board[xCoord][yCoord + 1] === 1;
 
@@ -41,6 +42,7 @@ function validateBattlefield(board) {
       let yDirIncrement = Number(yDirection);
 
       while (board[xCoord + xDirStep][yCoord + yDirStep] === 1) {
+        currentShipCoordinates.push([xCoord + xDirStep, yCoord + yDirStep]);
         board[xCoord + xDirStep][yCoord + yDirStep] = 2;
         xDirStep += xDirIncrement;
         yDirStep += yDirIncrement;
@@ -49,50 +51,42 @@ function validateBattlefield(board) {
     }
 
     actualShips[shipLength] += 1;
-  };
+  }
 
-  const getShipCoordinates = () => {};
+  function checkContact(shipCoordArr) {
+    shipCoordArr.forEach((shipCoord) => {
+      for (let x = -1; x <= 1; x++) {
+        for (let y = -1; y <= 1; y++) {
+          let newX = shipCoord[0] + x;
+          let newY = shipCoord[1] + y;
+          if (
+            newX >= 0 &&
+            newY >= 0 &&
+            newX < board.length &&
+            newY < board[0].length &&
+            board[newX][newY] === 1
+          ) {
+            shipContact = true;
+          }
+        }
+      }
+    });
+    currentShipCoordinates = [];
+  }
 
-  // validate sufficient space between ships
-  const noContact = (shipCoordinates) => {};
-
-  // nested loop
   for (let x = 0; x < board.length; x++) {
     if (shipContact) break;
     for (let y = 0; y < board[x].length; y++) {
       if (shipContact) break;
       if (board[x][y] === 1) {
         updateActualShip(x, y);
+        checkContact(currentShipCoordinates);
       }
-      console.log(`Field ${x},${y} is ${board[x][y]}`);
     }
   }
-  console.log(`actualShips`);
-  console.log(actualShips);
-  console.log(`requiredShips`);
-  console.log(requiredShips);
-  console.log(requiredShips === actualShips);
-  console.log(`!shipContact:${!shipContact}`);
-  console.log("----------------------------------");
-  // return validation
+
   return compareShips(requiredShips, actualShips) && !shipContact;
 }
-
-console.log(
-  validateBattlefield([
-    [1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
-    [1, 0, 1, 0, 0, 0, 0, 0, 1, 0],
-    [1, 0, 1, 0, 1, 1, 1, 0, 1, 0],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-    [0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  ])
-);
-console.log(true);
 
 // Description
 
