@@ -10,7 +10,6 @@ function spiralize(n) {
   let curField = [0, 0];
   let curDir = 0;
   let nextDir = 1;
-  let count = 0;
 
   const checkField = ([dx, dy], factor, value) => {
     const x = curField[0] + dx * factor;
@@ -27,7 +26,7 @@ function spiralize(n) {
     curField[1] += dy;
   };
 
-  while (count <= n * n) {
+  while (true) {
     grid[curField[0]][curField[1]] = 1;
 
     if (timeToQuit) {
@@ -38,59 +37,16 @@ function spiralize(n) {
       if (checkField(directions[nextDir], 2, 1)) {
         break;
       } else {
-        if (checkField(directions[nextDir], 3, 1)) { timeToQuit = true}
+        if (checkField(directions[nextDir], 3, 1)) {
+          timeToQuit = true;
+        }
         curDir = (curDir + 1) % 4;
         nextDir = (nextDir + 1) % 4;
       }
     }
 
     moveCurField(directions[curDir]);
-    count++;
   }
 
   return grid;
 }
-
-let one = [
-  [1, 1, 1, 1, 1, 1, 1, 1],
-  [o, o, o, o, o, o, o, 1],
-  [1, 1, 1, 1, 1, 1, o, 1],
-  [1, o, o, o, o, 1, o, 1],
-  [1, o, o, o, o, 1, o, 1],
-  [1, o, 1, 1, 1, 1, o, 1],
-  [1, o, o, o, o, o, o, 1],
-  [1, 1, 1, 1, 1, 1, 1, 1],
-];
-let two = [
-  [1, 1, 1, 1, 1, 1, 1, 1],
-  [o, o, o, o, o, o, o, 1],
-  [1, 1, 1, 1, 1, 1, o, 1],
-  [1, o, o, o, o, 1, o, 1],
-  [1, o, 1, o, o, 1, o, 1],
-  [1, o, 1, 1, 1, 1, o, 1],
-  [1, o, o, o, o, o, o, 1],
-  [1, 1, 1, 1, 1, 1, 1, 1],
-];
-
-let test = [
-  [1, 1, 1, 1, 1, 1, 1, 1],
-  [o, o, o, o, o, o, o, 1],
-  [1, 1, 1, 1, 1, 1, o, 1],
-  [1, o, o, o, o, 1, o, 1],
-  [1, o, o, o, o, 1, o, 1],
-  [1, 1, 1, 1, 1, 1, o, 1],
-  [1, o, o, o, o, o, o, 1],
-  [1, 1, 1, 1, 1, 1, 1, 1],
-];
-
-let result = [
-  [1, 1, 1, 1, 1, 1, 1, 1],
-  [o, o, o, o, o, o, o, 1],
-  [1, 1, 1, 1, 1, 1, o, 1],
-  [1, o, o, o, o, 1, o, 1],
-  [1, o, 1, o, o, 1, o, 1],
-  [1, o, 1, 1, 1, 1, o, 1],
-  [1, o, o, o, o, o, o, 1],
-  [1, 1, 1, 1, 1, 1, 1, 1],
-];
-
