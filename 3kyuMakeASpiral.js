@@ -9,63 +9,95 @@ function spiralize(n) {
   let curField = [0, 0];
   let curDir = 0;
   let nextDir = 1;
+  let straightSteps = 0;
 
-  const checkField = ([x, y], [dx, dy], factor) => (grid[x + dx * factor, y + dy * factor]) === 1
-  const moveField = ([x, y], [dx, dy]) => [x + dx, y + dy];
+  let count = 0;
 
-  let count = 1;
+  const checkField = ([dx, dy], factor, value) => {
+    const x = curField[0] + dx * factor;
+    const y = curField[1] + dy * factor;
+    if (grid[x] !== undefined) {
+      return grid[x][y] === value;
+    } else {
+      return grid[x] === value;
+    }
+    // console.log(`x: ${x}`);
+    // console.log(`y: ${y}`);
+    // if (grid[x] === undefined || grid[x][y] === undefined) {
+    //   return false;
+    // } else {
+    // }
+    // console.log(`grid[x][y]: ${grid[x][y]}`);
+  };
+
+  const moveCurField = ([dx, dy]) => {
+    curField[0] += dx;
+    curField[1] += dy;
+  };
 
   while (count <= n * n) {
+    grid[curField[0]][curField[1]] = 1;
+    console.log(`---------------curField: ${curField}---------------`);
+    console.log(`curField[0]: ${curField[0]}`);
+    console.log(`curField[1]: ${curField[1]}`);
+    console.log(`directions[curDir]: ${directions[curDir]}`);
+    console.log(`checkField(directions[curDir], 2, 1): ${checkField(directions[curDir], 2, 1)}`);
+    console.log(
+      `checkField(directions[curDir], 1, undefined): ${checkField(
+        directions[curDir],
+        1,
+        undefined
+      )}`
+    );
+    console.log(`checkField(directions[nextDir], 3, 1): ${checkField(directions[nextDir], 3, 1)}`);
+    console.log(`checkField(directions[nextDir], 3, 1): ${checkField(directions[nextDir], 3, 1)}`);
 
-    
+    if (checkField(directions[curDir], 2, 1) || checkField(directions[curDir], 1, undefined)) {
+      console.log(`************* conditional 1 triggered ***************`);
+      console.log(`checkField(directions[curDir], 2, 1): ${checkField(directions[curDir], 2, 1)}`);
+      console.log(
+        `checkField(directions[curDir], 1, undefined): ${checkField(
+          directions[curDir],
+          1,
+          undefined
+        )}`
+      );
+      if (checkField(directions[nextDir], 3, 1) || checkField(directions[nextDir], 2, 1)) {
+        break;
+      } else {
+        curDir = (curDir + 1) % 4;
 
-
-    const [x, y] = curField;
-    grid[x][y] = 1;
-
-    let nextField = moveField(curField, directions[curDir]);
-    let [nx, ny] = nextField;
-
-    // Check if the next cell is out of bounds or already filled
-    if (nx < 0 || ny < 0 || nx >= n || ny >= n || grid[nx][ny] === 1) {
-      curDir = (curDir + 1) % 4;
-      nextField = moveField(curField, directions[curDir]);
+        nextDir = (nextDir + 1) % 4;
+        straightSteps = 0;
+      }
     }
+    console.log(`[curDir]: ${[curDir]}`);
+    console.log(`directions[curDir]: ${directions[curDir]}`);
 
-    curField = nextField;
+    console.log(`curDir: ${curDir}`);
+    console.log(`nextDir: ${nextDir}`);
+    console.log(`curField: ${curField}`);
+    // console.log(`grid: ${grid[5][5]}`);
+    console.log(`directions[curDir]: ${directions[curDir]}`);
+    console.log(`directions[nextDir]: ${directions[nextDir]}`);
+
+    console.log(`grid:`);
+    console.log(grid);
+    console.log(`curField[0]: ${curField[0]}`);
+    console.log(`curField[1]: ${curField[1]}`);
+
+    moveCurField(directions[curDir]);
     count++;
   }
 
+  console.log(grid);
   return grid;
 }
 
 console.log(spiralize(6));
-
-// DESCRIPTION:
-// Your task, is to create a NxN spiral with a given size.
-
-// For example, spiral with size 5 should look like this:
-
-// 00000
-// ....0
-// 000.0
-// 0...0
-// 00000
-// and with the size 10:
-
-// 0000000000
-// .........0
-// 00000000.0
-// 0......0.0
-// 0.0000.0.0
-// 0.0..0.0.0
-// 0.0....0.0
-// 0.000000.0
-// 0........0
-// 0000000000
-// Return value should contain array of arrays, of 0 and 1, with the first row being composed of 1s. For example for given size 5 result should be:
-
-// [[1,1,1,1,1],[0,0,0,0,1],[1,1,1,0,1],[1,0,0,0,1],[1,1,1,1,1]]
-// Because of the edge-cases for tiny spirals, the size will be at least 5.
-
-// General rule-of-a-thumb is, that the snake made with '1' cannot touch to itself.
+// console.log(00000
+//   ....0
+//   000.0
+//   0...0
+//   00000
+//   )
