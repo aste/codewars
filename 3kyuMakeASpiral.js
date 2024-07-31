@@ -2,7 +2,7 @@ function spiralize(n) {
   const grid = Array.from({ length: n }, () => Array.from({ length: n }, () => 0));
   const directions = [
     [0, 1],
-    [1, 0],
+    [1, 0], 
     [0, -1],
     [-1, 0],
   ];
