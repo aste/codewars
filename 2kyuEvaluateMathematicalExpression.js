@@ -65,31 +65,107 @@ const calc = function (expression) {
   }
 
   if (tokens.includes("*") || tokens.includes("/")) {
-    let firstOperand;
+    let firstOperand = "";
+    let operator = "";
+    let secondOperand = "";
+    let firstOperandStartIndex;
+    let secondOperandEndIndex;
 
-    for (let i = 0; i < tokens.length; i++) {}
+    for (let i = 0; i < tokens.length; i++) {
+      if ((!isNaN(tokens[i]) || tokens[i] === ".") && !operator) {
+        firstOperand += tokens[i];
+        if (firstOperandStartIndex === undefined) {
+          firstOperandStartIndex = i;
+        }
+      }
+      if (tokens[i] === "*" || tokens[i] === "/") {
+        operator = tokens[i];
+      }
+      if ((!isNaN(tokens[i]) || tokens[i] === ".") && operator) {
+        secondOperand += tokens[i];
+        secondOperandEndIndex = i;
+      }
+      if (
+        (tokens[i] === "+" || tokens[i] === "-" || i === tokens.length - 1) &&
+        firstOperand &&
+        operator &&
+        secondOperand
+      ) {
+        let subResult;
+
+        if (operator === "*") {
+          subResult = parseFloat(firstOperand) * parseFloat(secondOperand);
+        } else if (operator === "/") {
+          subResult = parseFloat(firstOperand) / parseFloat(secondOperand);
+        }
+
+        tokens.splice(
+          firstOperandStartIndex,
+          secondOperandEndIndex - firstOperandStartIndex + 1,
+          subResult.toString()
+        );
+
+        i = firstOperandStartIndex;
+        firstOperand = "";
+        operator = "";
+        secondOperand = "";
+        firstOperandStartIndex = undefined;
+        secondOperandEndIndex = undefined;
+      }
+    }
   }
 
-  multiply;
+  if (tokens.includes("+") || tokens.includes("-")) {
+    let subResult = null;
+    let operand = "";
+    let operator = null;
+    let startIndex;
+    let endIndex;
 
-  console.log(`tokens:`);
-  console.log(tokens.join(""));
-  console.log(`-(-1)): ${-(-1)}`);
+    for (let i = 0; i < tokens.length; i++) {
+      if (!isNaN(tokens[i]) || tokens[i] === ".") {
+        operand += tokens[i];
+        if (startIndex === undefined) {
+          startIndex = i;
+        }
+        if (endIndex === undefined || i > endIndex) {
+          endIndex = i;
+        }
+      }
 
-  //   let arrOfParenthesis = expression.split(/(?=\()|(?<=\))/);
-  //   console.log(`arrOfParenthesis:`);
-  //   console.log(arrOfParenthesis);
-  //   let arrOfExpParts = expression.split(/([+\-()])/);
-  //   console.log(`arrOfExpParts:`);
-  //   console.log(arrOfExpParts);
-  //   let splitOperatorDetected = false;
-  //   let splitExpStart = 0;
-  //   let splitExpEnd = arrExp.length - 1;
+      if (tokens[i] === "+" || tokens[i] === "-" || i === tokens.length - 1) {
+        if (subResult === null) {
+          subResult = parseFloat(operand);
+        } else {
+          if (operator === "+") {
+            subResult += parseFloat(operand);
+          } else if (operator === "-") {
+            subResult -= parseFloat(operand);
+          }
+        }
 
-  //   for (let i = 0; i < arrExp.length - 1; i++) {
+        operator = tokens[i];
+        operand = "";
+        startIndex = i + 1;
+      }
 
-  //   }
-  // evaluate `expression` and return result
+      if (i === tokens.length - 1 && operand) {
+        if (operator === "+") {
+          subResult += parseFloat(operand);
+        } else if (operator === "-") {
+          subResult -= parseFloat(operand);
+        }
+
+        endIndex = i;
+      }
+
+      
+    }
+
+    tokens.splice(0, endIndex + 1, subResult.toString());
+  }
+
+
   return;
 };
 
