@@ -1,7 +1,6 @@
 const calc = function (expression) {
-  console.log(`expression:`);
-  console.log(expression);
   let tokens = expression.split("");
+  let validExpression = true;
 
   if (tokens.includes(" ")) {
     let plusMinusSignsDetected = 0;
@@ -18,7 +17,8 @@ const calc = function (expression) {
       }
       if (!isNaN(tokens[i]) && tokens[i].trim() !== "") {
         if (plusMinusSignsDetected >= 2 && blankSpacesDetected >= 2 && tokens[i - 1] === " ") {
-          return "Invalid";
+          validExpression = false;
+          break;
         }
       }
     }
@@ -115,93 +115,74 @@ const calc = function (expression) {
     }
   }
 
-  if (tokens.includes("+") || tokens.includes("-")) {
-    let subResult = null;
-    let operand = "";
-    let operator = null;
-    let startIndex;
-    let endIndex;
+  let result = 0;
+  let currentNumber = "";
+  let currentOperator = "+";
 
-    for (let i = 0; i < tokens.length; i++) {
-      if (!isNaN(tokens[i]) || tokens[i] === ".") {
-        operand += tokens[i];
-        if (startIndex === undefined) {
-          startIndex = i;
-        }
-        if (endIndex === undefined || i > endIndex) {
-          endIndex = i;
-        }
-      }
-
-      if (tokens[i] === "+" || tokens[i] === "-" || i === tokens.length - 1) {
-        if (subResult === null) {
-          subResult = parseFloat(operand);
-        } else {
-          if (operator === "+") {
-            subResult += parseFloat(operand);
-          } else if (operator === "-") {
-            subResult -= parseFloat(operand);
-          }
-        }
-
-        operator = tokens[i];
-        operand = "";
-        startIndex = i + 1;
-      }
-
-      if (i === tokens.length - 1 && operand) {
-        if (operator === "+") {
-          subResult += parseFloat(operand);
-        } else if (operator === "-") {
-          subResult -= parseFloat(operand);
-        }
-
-        endIndex = i;
-      }
-
-      
+  for (let i = 0; i < tokens.length; i++) {
+    if (!isNaN(tokens[i]) || tokens[i] === ".") {
+      currentNumber += tokens[i];
     }
 
-    tokens.splice(0, endIndex + 1, subResult.toString());
+    if (isNaN(tokens[i]) || i === tokens.length - 1) {
+      if (currentNumber) {
+        if (currentOperator === "+") result += parseFloat(currentNumber);
+        else if (currentOperator === "-") result -= parseFloat(currentNumber);
+      }
+
+      currentOperator = tokens[i];
+      currentNumber = "";
+    }
   }
 
-
-  return;
+  return validExpression ? result : "Invalid";
 };
 
-console.log(calc("2 / (2 + (3 * 4)) * 4.33 - -6"));
-console.log(calc("2 / (2 + (3 * 4)) * 4.33 - - 6"));
+console.log('calc("1+1")');
+console.log(`Should return: ${2}`);
+console.log(`It returns: ${calc("1+1")}`);
+console.log("");
+console.log('calc("1 - 1")');
+console.log(`Should return: ${0}`);
+console.log(`It returns: ${calc("1 - 1")}`);
+console.log("");
+console.log('calc("1* 1")');
+console.log(`Should return: ${1}`);
+console.log(`It returns: ${calc("1* 1")}`);
+console.log("");
+console.log('calc("1 /1")');
+console.log(`Should return: ${1}`);
+console.log(`It returns: ${calc("1 /1")}`);
+console.log("");
+console.log('calc("-123")');
+console.log(`Should return: ${-123}`);
+console.log(`It returns: ${calc("-123")}`);
+console.log("");
+console.log('calc("123")');
+console.log(`Should return: ${123}`);
+console.log(`It returns: ${calc("123")}`);
+console.log("");
+console.log('calc("2 /2+3 * 4.75- -6")');
+console.log(`Should return: ${21.25}`);
+console.log(`It returns: ${calc("2 /2+3 * 4.75- -6")}`);
+console.log("");
+console.log('calc("12* 123")');
+console.log(`Should return: ${1476}`);
+console.log(`It returns: ${calc("12* 123")}`);
+console.log("");
+console.log('calc("2 / (2 + 3) * 4.33 - -6")');
+console.log(`Should return: ${7.732}`);
+console.log(`It returns: ${calc("2 / (2 + 3) * 4.33 - -6")}`);
+console.log("");
+console.log('calc("2 / (2 + (3 * 4)) * 4.33 - -6")');
+console.log(`Should return: ${6.62}`);
+console.log(`It returns: ${calc("2 / (2 + (3 * 4)) * 4.33 - -6")}`);
+console.log("");
+console.log('calc("2 / (2 + (3 * 4)) * 4.33 - - 6")');
+console.log(`Should return: ${"Invalid"}`);
+console.log(`It returns: ${calc("2 / (2 + (3 * 4)) * 4.33 - - 6")}`);
+console.log("");
 
-// console.log(calc("1+1"));
-// console.log(2);
-// console.log("");
-// console.log(calc("1 - 1"));
-// console.log(0);
-// console.log("");
-// console.log(calc("1* 1"));
-// console.log(1);
-// console.log("");
-// console.log(calc("1 /1"));
-// console.log(1);
-// console.log("");
-// console.log(calc("-123"));
-// console.log(-123);
-// console.log("");
-// console.log(calc("123"));
-// console.log(123);
-// console.log("");
-// console.log(calc("2 /2+3 * 4.75- -6"));
-// console.log(21.25);
-// console.log("");
-// console.log(calc("12* 123"));
-// console.log(1476);
-// console.log("");
-// console.log(calc("2 / (2 + 3) * 4.33 - -6"));
-// console.log(7.732);
-// console.log("");
-
-console.log(calc("2 / (2 + (3 * 4)) * 4.33 - -6"));
-console.log(calc("2 / (2 + (3 * 4)) * 4.33 - - 6"));
 // You need to support multiple levels of nested parentheses, ex. (2 / (2 + 3.33) * 4) - -6
 
 // Whitespace
