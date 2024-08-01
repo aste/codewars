@@ -25,7 +25,7 @@ const calc = function (expression) {
     tokens = tokens.filter((token) => token !== " ");
   }
 
-  if (tokens.includes("(")) {
+  while (tokens.includes("(")) {
     let startOfParenthesisIndex = -1;
     let endOfParenthesisIndex;
     let nestedLevels = 0;
