@@ -64,54 +64,26 @@ const calc = function (expression) {
     }
   }
 
-  if (tokens.includes("*") || tokens.includes("/")) {
-    let firstOperand = "";
-    let operator = "";
-    let secondOperand = "";
-    let firstOperandStartIndex;
-    let secondOperandEndIndex;
+  let i = 0;
+  while (i < tokens.length) {
+    if (tokens[i] === "*" || tokens[i] === "/") {
+      let operator = tokens[i];
+      let j = i - 1;
+      while (j >= 0 && (!isNaN(tokens[j]) || tokens[j] === ".")) j--;
+      let firstOperand = parseFloat(tokens.slice(j + 1, i).join(""));
 
-    for (let i = 0; i < tokens.length; i++) {
-      if ((!isNaN(tokens[i]) || tokens[i] === ".") && !operator) {
-        firstOperand += tokens[i];
-        if (firstOperandStartIndex === undefined) {
-          firstOperandStartIndex = i;
-        }
-      }
-      if (tokens[i] === "*" || tokens[i] === "/") {
-        operator = tokens[i];
-      }
-      if ((!isNaN(tokens[i]) || tokens[i] === ".") && operator) {
-        secondOperand += tokens[i];
-        secondOperandEndIndex = i;
-      }
-      if (
-        (tokens[i] === "+" || tokens[i] === "-" || i === tokens.length - 1) &&
-        firstOperand &&
-        operator &&
-        secondOperand
-      ) {
-        let subResult;
+      let k = i + 1;
+      while (k < tokens.length && (!isNaN(tokens[k]) || tokens[k] === ".")) k++;
+      let secondOperand = parseFloat(tokens.slice(i + 1, k).join(""));
 
-        if (operator === "*") {
-          subResult = parseFloat(firstOperand) * parseFloat(secondOperand);
-        } else if (operator === "/") {
-          subResult = parseFloat(firstOperand) / parseFloat(secondOperand);
-        }
+      let result;
+      if (operator === "*") result = firstOperand * secondOperand;
+      else if (operator === "/") result = firstOperand / secondOperand;
 
-        tokens.splice(
-          firstOperandStartIndex,
-          secondOperandEndIndex - firstOperandStartIndex + 1,
-          subResult.toString()
-        );
-
-        i = firstOperandStartIndex;
-        firstOperand = "";
-        operator = "";
-        secondOperand = "";
-        firstOperandStartIndex = undefined;
-        secondOperandEndIndex = undefined;
-      }
+      tokens.splice(j + 1, k - j - 1, result.toString());
+      i = j + 1;
+    } else {
+      i++;
     }
   }
 
