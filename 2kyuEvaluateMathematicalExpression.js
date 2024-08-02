@@ -1,6 +1,8 @@
 const calc = function (expression) {
+  console.log(`Expression is: ${expression}`);
   let tokens = expression.split("");
   let validExpression = true;
+  let i = 0;
 
   if (tokens.includes(" ")) {
     let plusMinusSignsDetected = 0;
@@ -64,11 +66,10 @@ const calc = function (expression) {
     }
   }
 
-  let i = 0;
-
   while (i < tokens.length) {
     if (tokens[i] === "*" || tokens[i] === "/") {
       let operator = tokens[i];
+      console.log(`operator: ${operator}`);
       let j = i - 1;
       while (
         j >= 0 &&
@@ -78,6 +79,7 @@ const calc = function (expression) {
       )
         j--;
       let firstOperand = parseFloat(tokens.slice(j + 1, i).join(""));
+      console.log(`firstOperand: ${firstOperand}`);
 
       let k = i + 1;
       while (
@@ -86,17 +88,21 @@ const calc = function (expression) {
       )
         k++;
       let secondOperand = parseFloat(tokens.slice(i + 1, k).join(""));
+      console.log(`secondOperand: ${secondOperand}`);
 
       let result;
       if (operator === "*") result = firstOperand * secondOperand;
       else if (operator === "/") result = firstOperand / secondOperand;
 
+      console.log(`result: ${result}`);
+      console.log(``);
       tokens.splice(j + 1, k - j - 1, result.toString());
       i = j + 1;
     } else {
       i++;
     }
   }
+
   console.log(``);
   console.log(`tokens: ${tokens}`);
 
@@ -106,34 +112,45 @@ const calc = function (expression) {
   i = 0;
 
   while (i < tokens.length) {
-    if (
-      !isNaN(tokens[i]) ||
-      tokens[i] === "." ||
-      (tokens[i] === "-" && (i === 0 || isNaN(tokens[i - 1])))
-    ) {
+    // if (i === 0 && tokens[i] === "-") currentOperator = "-";
+    if (!isNaN(tokens[i]) || tokens[i] === ".") {
+      // || (tokens[i] === "-" && (i === 0 || isNaN(tokens[i - 1])))
       currentNumber += tokens[i];
-    }
-
-    if (isNaN(tokens[i]) || i === tokens.length - 1) {
+    } else {
       if (currentNumber) {
         if (currentOperator === "+") result += parseFloat(currentNumber);
         else if (currentOperator === "-") result -= parseFloat(currentNumber);
       }
 
-      currentOperator = tokens[i];
       currentNumber = "";
+      currentOperator = tokens[i];
 
-      if (i === tokens.length - 1 && !isNaN(tokens[i])) {
-        currentNumber += tokens[i];
-        if (currentOperator === "+") result += parseFloat(currentNumber);
-        else if (currentOperator === "-") result -= parseFloat(currentNumber);
+      while (tokens[i + 1] === "-" || tokens[i + 1] === "+") {
+        if (currentOperator === "-" && tokens[i + 1] === "-") {
+          currentOperator = "+";
+        } else if (currentOperator === "+" && tokens[i + 1] === "-") {
+          currentOperator = "-";
+        }
+        i++;
       }
     }
+
     console.log(`Current number: ${currentNumber}`);
-    console.log(`Current operator: ${currentOperator}`);
+    console.log(`currentOperator ${currentOperator}`);
     console.log(`Updated result: ${result}`);
     i++;
   }
+
+  if (currentNumber) {
+    if (currentOperator === "+") result += parseFloat(currentNumber);
+    else if (currentOperator === "-") result -= parseFloat(currentNumber);
+  }
+
+  console.log(`Current number: ${currentNumber}`);
+  console.log(`currentOperator ${currentOperator}`);
+  console.log(`Updated result: ${result}`);
+  console.log(`validExpression: ${validExpression}`);
+
   return validExpression ? result : "Invalid";
 };
 
@@ -177,14 +194,18 @@ console.log('calc("2 / (8 + (3 * 4)) * 29.33 - -6")');
 console.log(`Should return: ${8.933}`);
 console.log(`It returns: ${calc("2 / (8 + (3 * 4)) * 29.33 - -6")}`);
 console.log("-----------------------------------------------------------------------");
-// console.log('calc("2 / (2 + (3 * 4)) * 4.33 - -6")');
-// console.log(`Should return: ${6.62}`);
-// console.log(`It returns: ${calc("2 / (2 + (3 * 4)) * 4.33 - -6")}`);
-// console.log("-----------------------------------------------------------------------");
-// console.log('calc("2 / (2 + (3 * 4)) * 4.33 - - 6")');
-// console.log(`Should return: ${"Invalid"}`);
-// console.log(`It returns: ${calc("2 / (2 + (3 * 4)) * 4.33 - - 6")}`);
-// console.log("-----------------------------------------------------------------------");
+console.log('calc("2 / (2 + (3 * 4)) * 4.33 - -6")');
+console.log(`Should return: ${6.62}`);
+console.log(`It returns: ${calc("2 / (2 + (3 * 4)) * 4.33 - -6")}`);
+console.log("-----------------------------------------------------------------------");
+console.log('calc("2 / (2 + (3 * 4)) * 4.33 - - 6")');
+console.log(`Should return: ${"Invalid"}`);
+console.log(`It returns: ${calc("2 / (2 + (3 * 4)) * 4.33 - - 6")}`);
+console.log("-----------------------------------------------------------------------");
+console.log('calc("12* 123/-(-5 + 2)")');
+console.log(`Should return: ${"492"}`);
+console.log(`It returns: ${calc("12* 123/-(-5 + 2)")}`);
+console.log("-----------------------------------------------------------------------");
 
 // You need to support multiple levels of nested parentheses, ex. (2 / (2 + 3.33) * 4) - -6
 
