@@ -152,3 +152,43 @@ const calc = function (expression) {
 
   return validExpression ? result : "Invalid";
 };
+
+// Based on http://en.wikipedia.org/wiki/Recursive_descent_parser
+
+function calc(expr) {
+  // Initialize the expression to parse by removing whitespace and splitting into characters
+  var expressionToParse = expr.replace(/\s+/g, "").split("");
+
+  // Peek at the next character in the expression without consuming it
+  function peek() {
+    // Implement peek logic
+  }
+
+  // Get the next character in the expression and consume it
+  function get() {
+    // Implement get logic
+  }
+
+  // Parse and return a number from the expression
+  function number() {
+    // Implement number parsing logic
+  }
+
+  // Parse and return a factor (number, parenthesis expression, or negation)
+  function factor() {
+    // Implement factor parsing logic
+  }
+
+  // Parse and return a term (factors connected by multiplication or division)
+  function term() {
+    // Implement term parsing logic
+  }
+
+  // Parse and return an expression (terms connected by addition or subtraction)
+  function expression() {
+    // Implement expression parsing logic
+  }
+
+  // Start parsing and return the result
+  return expression();
+}
