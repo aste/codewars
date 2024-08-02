@@ -75,7 +75,6 @@ const calc = function (expression) {
       console.log(`operator: ${operator}`);
       let j = i - 1;
 
-      // Parse first operand
       while (
         j >= 0 &&
         (!isNaN(tokens[j]) ||
@@ -87,11 +86,9 @@ const calc = function (expression) {
       let firstOperand = parseFloat(tokens.slice(j + 1, i).join(""));
       console.log(`firstOperand: ${firstOperand}`);
 
-      // Parse second operand
       let k = i + 1;
       let isNegative = false;
       if (tokens[k] === "-") {
-        // Check if unary minus
         isNegative = true;
         k++;
         while (tokens[k] === "-") {
@@ -108,7 +105,6 @@ const calc = function (expression) {
       }
       console.log(`secondOperand: ${secondOperand}`);
 
-      // Calculate result
       let result;
       if (operator === "*") {
         result = firstOperand * secondOperand;
@@ -134,9 +130,7 @@ const calc = function (expression) {
   i = 0;
 
   while (i < tokens.length) {
-    // if (i === 0 && tokens[i] === "-") currentOperator = "-";
     if (!isNaN(tokens[i]) || tokens[i] === ".") {
-      // || (tokens[i] === "-" && (i === 0 || isNaN(tokens[i - 1])))
       currentNumber += tokens[i];
     } else {
       if (currentNumber) {
@@ -157,9 +151,6 @@ const calc = function (expression) {
       }
     }
 
-    // console.log(`Current number: ${currentNumber}`);
-    // console.log(`currentOperator ${currentOperator}`);
-    // console.log(`Updated result: ${result}`);
     i++;
   }
 
@@ -168,92 +159,5 @@ const calc = function (expression) {
     else if (currentOperator === "-") result -= parseFloat(currentNumber);
   }
 
-  // console.log(`Current number: ${currentNumber}`);
-  // console.log(`currentOperator ${currentOperator}`);
-  // console.log(`Updated result: ${result}`);
-  // console.log(`validExpression: ${validExpression}`);
-
   return validExpression ? result : "Invalid";
 };
-
-console.log('calc("1+1")');
-console.log(`Should return: ${2}`);
-console.log(`It returns: ${calc("1+1")}`);
-console.log("-----------------------------------------------------------------------");
-console.log('calc("1 - 1")');
-console.log(`Should return: ${0}`);
-console.log(`It returns: ${calc("1 - 1")}`);
-console.log("-----------------------------------------------------------------------");
-console.log('calc("1* 1")');
-console.log(`Should return: ${1}`);
-console.log(`It returns: ${calc("1* 1")}`);
-console.log("-----------------------------------------------------------------------");
-console.log('calc("1 /1")');
-console.log(`Should return: ${1}`);
-console.log(`It returns: ${calc("1 /1")}`);
-console.log("-----------------------------------------------------------------------");
-console.log('calc("-123")');
-console.log(`Should return: ${-123}`);
-console.log(`It returns: ${calc("-123")}`);
-console.log("-----------------------------------------------------------------------");
-console.log('calc("123")');
-console.log(`Should return: ${123}`);
-console.log(`It returns: ${calc("123")}`);
-console.log("-----------------------------------------------------------------------");
-console.log('calc("2 /2+3 * 4.75- -6")');
-console.log(`Should return: ${21.25}`);
-console.log(`It returns: ${calc("2 /2+3 * 4.75- -6")}`);
-console.log("-----------------------------------------------------------------------");
-console.log('calc("12* 123")');
-console.log(`Should return: ${1476}`);
-console.log(`It returns: ${calc("12* 123")}`);
-console.log("-----------------------------------------------------------------------");
-console.log('calc("2 / (2 + 3) * 4.33 - -6")');
-console.log(`Should return: ${7.732}`);
-console.log(`It returns: ${calc("2 / (2 + 3) * 4.33 - -6")}`);
-console.log("-----------------------------------------------------------------------");
-console.log('calc("2 / (8 + (3 * 4)) * 29.33 - -6")');
-console.log(`Should return: ${8.933}`);
-console.log(`It returns: ${calc("2 / (8 + (3 * 4)) * 29.33 - -6")}`);
-console.log("-----------------------------------------------------------------------");
-console.log('calc("2 / (2 + (3 * 4)) * 4.33 - -6")');
-console.log(`Should return: ${6.62}`);
-console.log(`It returns: ${calc("2 / (2 + (3 * 4)) * 4.33 - -6")}`);
-console.log("-----------------------------------------------------------------------");
-console.log('calc("2 / (2 + (3 * 4)) * 4.33 - - 6")');
-console.log(`Should return: ${"Invalid"}`);
-console.log(`It returns: ${calc("2 / (2 + (3 * 4)) * 4.33 - - 6")}`);
-console.log("-----------------------------------------------------------------------");
-console.log('calc("12* 123/-(-5 + 2)")');
-console.log(`Should return: ${"492"}`);
-console.log(`It returns: ${calc("12* 123/-(-5 + 2)")}`);
-console.log("-----------------------------------------------------------------------");
-
-// You need to support multiple levels of nested parentheses, ex. (2 / (2 + 3.33) * 4) - -6
-
-// Whitespace
-// There may or may not be whitespace between numbers and operators.
-
-// An addition to this rule is that the minus sign (-) used for negating numbers and parentheses will never be separated by whitespace. I.e all of the following are valid expressions.
-
-// 1-1    // 0
-// 1 -1   // 0
-// 1- 1   // 0
-// 1 - 1  // 0
-// 1- -1  // 2
-// 1 - -1 // 2
-// 1--1   // 2
-
-// 6 + -(4)   // 2
-// 6 + -( -4) // 10
-// And the following are invalid expressions
-
-// 1 - - 1    // Invalid
-// 1- - 1     // Invalid
-// 6 + - (4)  // Invalid
-// 6 + -(- 4) // Invalid
-// Validation
-// You do not need to worry about validation - you will only receive valid mathematical expressions following the above rules.
-
-// Restricted APIs
-// NOTE: Both eval and Function are disabled.
