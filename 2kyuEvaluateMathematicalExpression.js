@@ -1,5 +1,4 @@
 const calc = function (expression) {
-  console.log(`Expression is: ${expression}`);
   let tokens = expression.split("");
   let validExpression = true;
   let i = 0;
@@ -72,7 +71,6 @@ const calc = function (expression) {
   while (i < tokens.length) {
     if (tokens[i] === "*" || tokens[i] === "/") {
       let operator = tokens[i];
-      console.log(`operator: ${operator}`);
       let j = i - 1;
 
       while (
@@ -84,7 +82,6 @@ const calc = function (expression) {
         j--;
       }
       let firstOperand = parseFloat(tokens.slice(j + 1, i).join(""));
-      console.log(`firstOperand: ${firstOperand}`);
 
       let k = i + 1;
       let isNegative = false;
@@ -103,7 +100,6 @@ const calc = function (expression) {
       if (isNegative) {
         secondOperand = -secondOperand;
       }
-      console.log(`secondOperand: ${secondOperand}`);
 
       let result;
       if (operator === "*") {
@@ -112,17 +108,12 @@ const calc = function (expression) {
         result = firstOperand / secondOperand;
       }
 
-      console.log(`result: ${result}`);
-      console.log(``);
       tokens.splice(j + 1, k - j - 1, result.toString());
       i = j + 1;
     } else {
       i++;
     }
   }
-
-  console.log(``);
-  console.log(`tokens: ${tokens}`);
 
   let result = 0;
   let currentNumber = "";
