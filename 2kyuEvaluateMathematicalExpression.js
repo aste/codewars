@@ -5,22 +5,25 @@ const calc = function (expression) {
   let i = 0;
 
   if (tokens.includes(" ")) {
-    let plusMinusSignsDetected = 0;
+    let signsDetected = 0;
     let blankSpacesDetected = 0;
     let blankSpacesCanBeDetected = false;
 
     for (let i = 0; i < tokens.length; i++) {
       if (tokens[i] === "-" || tokens[i] === "+") {
-        plusMinusSignsDetected += 1;
+        signsDetected += 1;
         blankSpacesCanBeDetected = true;
       }
       if (tokens[i] === " " && blankSpacesCanBeDetected) {
         blankSpacesDetected += 1;
       }
       if (!isNaN(tokens[i]) && tokens[i].trim() !== "") {
-        if (plusMinusSignsDetected >= 2 && blankSpacesDetected >= 2 && tokens[i - 1] === " ") {
+        if (signsDetected >= 2 && blankSpacesDetected >= 2 && tokens[i - 1] === " ") {
           validExpression = false;
           break;
+        } else {
+          signsDetected = 0;
+          blankSpacesDetected = 0;
         }
       }
     }
@@ -71,28 +74,47 @@ const calc = function (expression) {
       let operator = tokens[i];
       console.log(`operator: ${operator}`);
       let j = i - 1;
+
+      // Parse first operand
       while (
         j >= 0 &&
         (!isNaN(tokens[j]) ||
           tokens[j] === "." ||
           (tokens[j] === "-" && (j === 0 || isNaN(tokens[j - 1]))))
-      )
+      ) {
         j--;
+      }
       let firstOperand = parseFloat(tokens.slice(j + 1, i).join(""));
       console.log(`firstOperand: ${firstOperand}`);
 
+      // Parse second operand
       let k = i + 1;
-      while (
-        k < tokens.length &&
-        (!isNaN(tokens[k]) || tokens[k] === "." || (tokens[k] === "-" && k === i + 1))
-      )
+      let isNegative = false;
+      if (tokens[k] === "-") {
+        // Check if unary minus
+        isNegative = true;
         k++;
-      let secondOperand = parseFloat(tokens.slice(i + 1, k).join(""));
+        while (tokens[k] === "-") {
+          isNegative = !isNegative;
+          k++;
+        }
+      }
+      while (k < tokens.length && (!isNaN(tokens[k]) || tokens[k] === ".")) {
+        k++;
+      }
+      let secondOperand = parseFloat(tokens.slice(i + 1 + (isNegative ? 1 : 0), k).join(""));
+      if (isNegative) {
+        secondOperand = -secondOperand;
+      }
       console.log(`secondOperand: ${secondOperand}`);
 
+      // Calculate result
       let result;
-      if (operator === "*") result = firstOperand * secondOperand;
-      else if (operator === "/") result = firstOperand / secondOperand;
+      if (operator === "*") {
+        result = firstOperand * secondOperand;
+      } else if (operator === "/") {
+        result = firstOperand / secondOperand;
+      }
 
       console.log(`result: ${result}`);
       console.log(``);
@@ -135,9 +157,9 @@ const calc = function (expression) {
       }
     }
 
-    console.log(`Current number: ${currentNumber}`);
-    console.log(`currentOperator ${currentOperator}`);
-    console.log(`Updated result: ${result}`);
+    // console.log(`Current number: ${currentNumber}`);
+    // console.log(`currentOperator ${currentOperator}`);
+    // console.log(`Updated result: ${result}`);
     i++;
   }
 
@@ -146,10 +168,10 @@ const calc = function (expression) {
     else if (currentOperator === "-") result -= parseFloat(currentNumber);
   }
 
-  console.log(`Current number: ${currentNumber}`);
-  console.log(`currentOperator ${currentOperator}`);
-  console.log(`Updated result: ${result}`);
-  console.log(`validExpression: ${validExpression}`);
+  // console.log(`Current number: ${currentNumber}`);
+  // console.log(`currentOperator ${currentOperator}`);
+  // console.log(`Updated result: ${result}`);
+  // console.log(`validExpression: ${validExpression}`);
 
   return validExpression ? result : "Invalid";
 };
