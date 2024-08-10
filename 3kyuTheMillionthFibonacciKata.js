@@ -1,6 +1,33 @@
 function fib(n) {
-  return 0n;
+  const negativeFib = n < 0 ? true : false;
+  const signBit = negativeFib && n % 2 === 0 ? BigInt(-1) : BigInt(1);
+  const nAbsolute = Math.abs(n);
+
+  let a = BigInt(0);
+  let b = BigInt(1);
+  let c = BigInt(1);
+
+  if (n === 0) return 0n;
+  if (nAbsolute === 1 || nAbsolute === 2) return signBit * c;
+
+  for (let i = 2; i <= nAbsolute; i++) {
+    c = a + b;
+    a = b;
+    b = c;
+  }
+
+  return signBit * c;
 }
+
+// Recursive
+// const fibonacci = (n) => {
+//   if (n <= 1) {
+//       return n
+//   }
+//   else {
+//       return fibonacci(n-1) + fibonacci(n-2)
+//   }
+// }
 
 // The year is 1214. One night, Pope Innocent III awakens to find the the archangel Gabriel floating before him. Gabriel thunders to the pope:
 
@@ -28,3 +55,53 @@ function fib(n) {
 // HINT I: Can you rearrange the equation fib(n + 2) = fib(n + 1) + fib(n) to find fib(n) if you already know fib(n + 1) and fib(n + 2)? Use this to reason what value fib has to have for negative values.
 
 // HINT II: See https://web.archive.org/web/20220614001843/https://mitpress.mit.edu/sites/default/files/sicp/full-text/book/book-Z-H-11.html#%_sec_1.2.4
+
+// const {assert} = require("chai");
+// describe("The Millionth Fibonacci",()=>{
+//   describe("example tests",()=>{
+//     it("fib 0",()=>assert.strictEqual( fib(0), 0n ));
+//     it("fib 1",()=>assert.strictEqual( fib(1), 1n ));
+//     it("fib 2",()=>assert.strictEqual( fib(2), 1n ));
+//     it("fib 3",()=>assert.strictEqual( fib(3), 2n ));
+//     it("fib 4",()=>assert.strictEqual( fib(4), 3n ));
+//     it("fib 5",()=>assert.strictEqual( fib(5), 5n ));
+//     it("fib -6",()=>assert.strictEqual( fib(-6), -8n ));
+//   });
+// });
+
+console.log("fib 0");
+console.log(`Should give ${0n}`);
+console.log(fib(0));
+console.log("");
+
+console.log("fib 1");
+console.log(`Should give ${1n}`);
+console.log(fib(1));
+console.log("");
+
+console.log("fib 2");
+console.log(`Should give ${1n}`);
+console.log(fib(2));
+console.log("");
+
+console.log("fib 3");
+console.log(`Should give ${2n}`);
+console.log(fib(3));
+console.log("");
+
+console.log("fib 4");
+console.log(`Should give ${3n}`);
+console.log(fib(4));
+console.log("");
+
+console.log("fib 5");
+console.log(`Should give ${5n}`);
+console.log(fib(5));
+console.log("");
+
+console.log("fib -6");
+console.log(`Should give ${-8n}`);
+console.log(fib(-6));
+console.log("");
+
+console.log("----------------------------------------------------------------");
