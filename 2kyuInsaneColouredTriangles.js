@@ -35,33 +35,33 @@ function triangle(row) {
 }
 
 
-function triangle(row) {
-  const colorMap = { R: 0, G: 1, B: 2 };
-  const colorReverseMap = ["R", "G", "B"];
+// function triangle(row) {
+//   const colorMap = { R: 0, G: 1, B: 2 };
+//   const colorReverseMap = ["R", "G", "B"];
 
-  let rowArray = row.split("").map((char) => colorMap[char]);
+//   let rowArray = row.split("").map((char) => colorMap[char]);
 
-  const reductionSteps = [];
+//   const reductionSteps = [];
 
-  for (let exponent = 0; Math.pow(3, exponent) <= rowArray.length; exponent++) {
-    reductionSteps.unshift(Math.pow(3, exponent) + 1);
-  }
+//   for (let exponent = 0; Math.pow(3, exponent) <= rowArray.length; exponent++) {
+//     reductionSteps.unshift(Math.pow(3, exponent) + 1);
+//   }
 
-  for (const stepSize of reductionSteps) {
-    while (rowArray.length >= stepSize) {
-      const reducedRow = [];
+//   for (const stepSize of reductionSteps) {
+//     while (rowArray.length >= stepSize) {
+//       const reducedRow = [];
 
-      for (let i = 0; i < rowArray.length - stepSize + 1; i++) {
-        if (rowArray[i] === rowArray[i + stepSize - 1]) {
-          reducedRow.push(rowArray[i]);
-        } else {
-          reducedRow.push((rowArray[i] + rowArray[i + stepSize - 1]) % 3);
-        }
-      }
+//       for (let i = 0; i < rowArray.length - stepSize + 1; i++) {
+//         if (rowArray[i] === rowArray[i + stepSize - 1]) {
+//           reducedRow.push(rowArray[i]);
+//         } else {
+//           reducedRow.push((rowArray[i] + rowArray[i + stepSize - 1]) % 3);
+//         }
+//       }
 
-      rowArray = reducedRow;
-    }
-  }
+//       rowArray = reducedRow;
+//     }
+//   }
 
-  return colorReverseMap[rowArray[0]];
-}
+//   return colorReverseMap[rowArray[0]];
+// }
