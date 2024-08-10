@@ -15,7 +15,7 @@ function encodeRailFenceCipher(string, numberRails) {
       if (j === yCoordinate) {
         railsOfStrings[j].push(stringTokens[i]);
       } else {
-        railsOfStrings[j].push("|");
+        railsOfStrings[j].push("*");
       }
     }
 
@@ -23,13 +23,59 @@ function encodeRailFenceCipher(string, numberRails) {
   }
 
   return railsOfStrings
-    .flatMap((subArr) => subArr)
-    .filter((char) => char !== "|")
+    .flat()
+    .filter((char) => char !== "*")
     .join("");
 }
 
 function decodeRailFenceCipher(string, numberRails) {
   if (string === "") return "";
+  const railsOfStrings = [];
+  const decipheredSequence = [];
+  const stringTokens = string.split("");
+  const switchInterval = numberRails - 1;
+  let yCoordinate = 0;
+  let yDirection = 1;
+
+  for (let i = 0; i < numberRails; i++) railsOfStrings.push([]);
+
+  for (let i = 0; i < stringTokens.length; i++) {
+    if (i % switchInterval === 0 && i !== 0) yDirection *= -1;
+
+    for (let j = 0; j < numberRails; j++) {
+      if (j === yCoordinate) {
+        railsOfStrings[j].push("*");
+      } else {
+        railsOfStrings[j].push("");
+      }
+    }
+
+    yCoordinate += yDirection;
+  }
+
+  let strTokenIterator = 0;
+
+  for (let i = 0; i < railsOfStrings.length; i++) {
+    let currentRail = railsOfStrings[i];
+
+    for (let j = 0; j < currentRail.length; j++) {
+      if (currentRail[j] === "*") {
+        decipheredSequence[j] = stringTokens[strTokenIterator];
+        strTokenIterator += 1;
+      }
+    }
+  }
+
+  return decipheredSequence.join("");
+}
+
+function calRank() {
+  let currentRank = 1085;
+  let newRank = 1117;
+  let currentProgress = 0.086;
+  let newProgress = 0.135;
+  let totalRankPoint
+
 }
 
 // DESCRIPTION:
@@ -53,21 +99,26 @@ function decodeRailFenceCipher(string, numberRails) {
 
 // Note that the example above excludes the punctuation and spaces just for simplicity. There are, however, tests that include punctuation. Don't filter out punctuation as they are a part of the string.
 
-console.log('encodeRailFenceCipher("WEAREDISCOVEREDFLEEATONCE", 3);');
-console.log("Should give:");
-console.log("WECRLTEERDSOEEFEAOCAIVDEN");
-console.log("It gives:");
-console.log(encodeRailFenceCipher("WEAREDISCOVEREDFLEEATONCE", 3));
-console.log("--------------------------------------------------------");
-
-// decodeRailFenceCipher("WECRLTEERDSOEEFEAOCAIVDEN", 3);
+// console.log('encodeRailFenceCipher("WEAREDISCOVEREDFLEEATONCE", 3);');
 // console.log("Should give:");
-// console.log("WEAREDISCOVEREDFLEEATONCE");
+// console.log("WECRLTEERDSOEEFEAOCAIVDEN");
+// console.log("");
+// console.log("It gives:");
+// console.log(encodeRailFenceCipher("WEAREDISCOVEREDFLEEATONCE", 3));
 // console.log("--------------------------------------------------------");
 
-console.log('encodeRailFenceCipher("Hello, World!", 3);');
+console.log('decodeRailFenceCipher("WECRLTEERDSOEEFEAOCAIVDEN", 3);');
 console.log("Should give:");
-console.log("Hoo!el,Wrdl l");
+console.log("WEAREDISCOVEREDFLEEATONCE");
+console.log("");
 console.log("It gives:");
-console.log(encodeRailFenceCipher("Hello, World!", 3));
+decodeRailFenceCipher("WECRLTEERDSOEEFEAOCAIVDEN", 3);
 console.log("--------------------------------------------------------");
+
+// console.log('encodeRailFenceCipher("Hello, World!", 3);');
+// console.log("Should give:");
+// console.log("Hoo!el,Wrdl l");
+// console.log("");
+// console.log("It gives:");
+// console.log(encodeRailFenceCipher("Hello, World!", 3));
+// console.log("--------------------------------------------------------");
