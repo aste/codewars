@@ -1,8 +1,10 @@
 function encodeRailFenceCipher(string, numberRails) {
   if (string === "") return "";
+
   const railsOfStrings = [];
   const stringTokens = string.split("");
   const switchInterval = numberRails - 1;
+
   let yCoordinate = 0;
   let yDirection = 1;
 
@@ -30,10 +32,12 @@ function encodeRailFenceCipher(string, numberRails) {
 
 function decodeRailFenceCipher(string, numberRails) {
   if (string === "") return "";
+
   const railsOfStrings = [];
   const decipheredSequence = [];
   const stringTokens = string.split("");
   const switchInterval = numberRails - 1;
+
   let yCoordinate = 0;
   let yDirection = 1;
 
