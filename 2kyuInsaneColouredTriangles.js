@@ -1,5 +1,26 @@
+const colorCombs = {
+  GG: "G",
+  BR: "G",
+  RB: "G",
+  RR: "R",
+  GB: "R",
+  BG: "R",
+  BB: "B",
+  GR: "B",
+  RG: "B",
+};
+
 function triangle(row) {
-  return row;
+  if (row.length === 1) return row;
+
+  let nextRow = [];
+
+  for (let i = 0; i < row.length - 1; i++) {
+    let currentColorComb = `${row[i]}${row[i + 1]}`;
+    nextRow.push(colorCombs[currentColorComb]);
+  }
+
+  return triangle(nextRow.join(""));
 }
 
 // DESCRIPTION:
@@ -36,9 +57,33 @@ function triangle(row) {
 // 100 tests of 1000 <= length(row) <= 10000
 // 100 tests of 10000 <= length(row) <= 100000
 // Examples
-// triangle('B') == 'B'
-// triangle('GB') == 'R'
-// triangle('RRR') == 'R'
-// triangle('RGBG') == 'B'
-// triangle('RBRGBRB') == 'G'
-// triangle('RBRGBRBGGRRRBGBBBGG') == 'G'
+
+console.log("triangle('B') should give:");
+console.log("B");
+console.log(`It gives: ${triangle("B")}`);
+console.log("----------------------------------------");
+
+console.log("triangle('GB') should give:");
+console.log("R");
+console.log(`It gives: ${triangle("GB")}`);
+console.log("----------------------------------------");
+
+console.log("triangle('RRR') should give:");
+console.log("R");
+console.log(`It gives: ${triangle("RRR")}`);
+console.log("----------------------------------------");
+
+console.log("triangle('RGBG') should give:");
+console.log("B");
+console.log(`It gives: ${triangle("RGBG")}`);
+console.log("----------------------------------------");
+
+console.log("triangle('RBRGBRB') should give:");
+console.log("G");
+console.log(`It gives: ${triangle("RBRGBRB")}`);
+console.log("----------------------------------------");
+
+console.log("triangle('RBRGBRBGGRRRBGBBBGG') should give:");
+console.log("G");
+console.log(`It gives: ${triangle("RBRGBRBGGRRRBGBBBGG")}`);
+console.log("----------------------------------------");
