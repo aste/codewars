@@ -1,23 +1,46 @@
 function fib(n) {
-  const negativeFib = n < 0 ? true : false;
+  const negativeFib = n < 0;
   const signBit = negativeFib && n % 2 === 0 ? BigInt(-1) : BigInt(1);
   const nAbsolute = Math.abs(n);
 
-  let a = BigInt(0);
-  let b = BigInt(1);
-  let c = BigInt(1);
+  function fibHelper(n) {
+    if (n === 0) return [BigInt(0), BigInt(1)];
 
-  if (n === 0) return 0n;
-  if (nAbsolute === 1 || nAbsolute === 2) return signBit * c;
+    const [a, b] = fibHelper(Math.floor(n / 2));
+    const c = a * (BigInt(2) * b - a);
+    const d = a * a + b * b;
 
-  for (let i = 2; i <= nAbsolute; i++) {
-    c = a + b;
-    a = b;
-    b = c;
+    if (n % 2 === 0) {
+      return [c, d];
+    } else {
+      return [d, c + d];
+    }
   }
 
-  return signBit * c;
+  const [result, _] = fibHelper(nAbsolute);
+  return signBit * result;
 }
+
+// function fib(n) {
+//   const negativeFib = n < 0 ? true : false;
+//   const signBit = negativeFib && n % 2 === 0 ? BigInt(-1) : BigInt(1);
+//   const nAbsolute = Math.abs(n);
+
+//   let a = BigInt(0);
+//   let b = BigInt(1);
+//   let c = BigInt(1);
+
+//   if (n === 0) return 0n;
+//   if (nAbsolute === 1 || nAbsolute === 2) return signBit * c;
+
+//   for (let i = 2; i <= nAbsolute; i++) {
+//     c = a + b;
+//     a = b;
+//     b = c;
+//   }
+
+//   return signBit * c;
+// }
 
 // Recursive
 // const fibonacci = (n) => {
