@@ -11,17 +11,21 @@ const colorCombs = {
 };
 
 function triangle(row) {
-  if (row.length === 1) return row;
-
-  let nextRow = [];
-
-  for (let i = 0; i < row.length - 1; i++) {
-    let currentColorComb = `${row[i]}${row[i + 1]}`;
-    nextRow.push(colorCombs[currentColorComb]);
+    let currentRow = row.split("");
+  
+    while (currentRow.length > 1) {
+      let nextRow = [];
+      
+      for (let i = 0; i < currentRow.length - 1; i++) {
+        let currentColorComb = `${currentRow[i]}${currentRow[i + 1]}`;
+        nextRow.push(colorCombs[currentColorComb]);
+      }
+      
+      currentRow = nextRow;
+    }
+  
+    return currentRow[0];
   }
-
-  return triangle(nextRow.join(""));
-}
 
 // DESCRIPTION:
 // Disclaimer
