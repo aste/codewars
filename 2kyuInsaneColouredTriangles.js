@@ -7,17 +7,10 @@ function triangle(row) {
     reductionSteps.unshift(Math.pow(3, exponent) + 1);
   }
 
-  console.log("Reduction steps (reductionSteps):", reductionSteps);
-
   // Loop through each step size in reductionSteps, starting from the largest
   for (const stepSize of reductionSteps) {
-    console.log(`\nProcessing with stepSize = ${stepSize}`); // Debugging: Show current step size being processed
-
     // Continue reducing the row while its length is greater than or equal to the current step size
     while (row.length >= stepSize) {
-      console.log(`Current row length before reduction: ${row.length}`);
-      console.log(`Current row before reduction: ${row}`); // Debugging: Show the current state of the row
-
       // Initialize a new array to hold the reduced version of the row
       let reducedRow = [];
 
@@ -35,90 +28,40 @@ function triangle(row) {
 
       // Convert reducedRow back to a string and assign it to row for the next reduction step
       row = reducedRow.join("");
-      console.log(`Row length after reduction: ${row.length}`);
-      console.log(`Row after reduction: ${row}`);
     }
   }
 
-  console.log(`\nFinal reduced row: ${row}`); // Debugging: Show the final reduced row before returning the result
   return row[0];
 }
 
-// function triangle(row) {
-//   // Initialize an array to store the reduction steps derived from powers of 3
-//   const reductionSteps = [];
 
-//   // Loop to calculate powers of 3 and add 1 to each, up to the length of the row
-//   for (let exponent = 0; Math.pow(3, exponent) <= row.length; exponent++) {
-//     reductionSteps.unshift(Math.pow(3, exponent) + 1);
-//   }
+function triangle(row) {
+  const colorMap = { R: 0, G: 1, B: 2 };
+  const colorReverseMap = ["R", "G", "B"];
 
-//   console.log("Reduction steps (reductionSteps):", reductionSteps);
+  let rowArray = row.split("").map((char) => colorMap[char]);
 
-//   // Loop through each step size in reductionSteps, starting from the largest
-//   for (const stepSize of reductionSteps) {
-//     console.log(`\nProcessing with stepSize = ${stepSize}`); // Debugging: Show current step size being processed
+  const reductionSteps = [];
 
-//     // Continue reducing the row while its length is greater than or equal to the current step size
-//     while (row.length >= stepSize) {
-//       console.log(`Current row length before reduction: ${row.length}`);
-//       console.log(`Current row before reduction: ${row}`); // Debugging: Show the current state of the row
+  for (let exponent = 0; Math.pow(3, exponent) <= rowArray.length; exponent++) {
+    reductionSteps.unshift(Math.pow(3, exponent) + 1);
+  }
 
-//       // Initialize a new array to hold the reduced version of the row
-//       let reducedRow = [];
+  for (const stepSize of reductionSteps) {
+    while (rowArray.length >= stepSize) {
+      const reducedRow = [];
 
-//       // Iterate through the row, reducing it by comparing elements stepSize - 1 apart
-//       for (let i = 0; i < row.length - stepSize + 1; i++) {
-//         if (row[i] === row[i + stepSize - 1]) {
-//           reducedRow.push(row[i]);
-//         } else {
-//           const remainingColorSet = new Set(["R", "G", "B"]);
-//           remainingColorSet.delete(row[i]); // Remove the first color
-//           remainingColorSet.delete(row[i + stepSize - 1]); // Remove the second color
-//           reducedRow.push([...remainingColorSet][0]); // Push the remaining color to reducedRow
-//         }
-//       }
+      for (let i = 0; i < rowArray.length - stepSize + 1; i++) {
+        if (rowArray[i] === rowArray[i + stepSize - 1]) {
+          reducedRow.push(rowArray[i]);
+        } else {
+          reducedRow.push((rowArray[i] + rowArray[i + stepSize - 1]) % 3);
+        }
+      }
 
-//       // Convert reducedRow back to a string and assign it to row for the next reduction step
-//       row = reducedRow.join("");
-//       console.log(`Row length after reduction: ${row.length}`);
-//       console.log(`Row after reduction: ${row}`);
-//     }
-//   }
+      rowArray = reducedRow;
+    }
+  }
 
-//   console.log(`\nFinal reduced row: ${row}`); // Debugging: Show the final reduced row before returning the result
-//   return row[0];
-// }
-
-
-
-
-console.log("triangle('B') should give:");
-console.log("B");
-console.log(`It gives: ${triangle("B")}`);
-console.log("----------------------------------------");
-
-console.log("triangle('GB') should give:");
-console.log("R");
-console.log(`It gives: ${triangle("GB")}`);
-console.log("----------------------------------------");
-
-console.log("triangle('RRR') should give:");
-console.log("R");
-console.log(`It gives: ${triangle("RRR")}`);
-console.log("----------------------------------------");
-
-console.log("triangle('RGBG') should give:");
-console.log("B");
-console.log(`It gives: ${triangle("RGBG")}`);
-console.log("----------------------------------------");
-
-console.log("triangle('RBRGBRB') should give:");
-console.log("G");
-console.log(`It gives: ${triangle("RBRGBRB")}`);
-console.log("----------------------------------------");
-
-console.log("triangle('RBRGBRBGGRRRBGBBBGG') should give:");
-console.log("G");
-console.log(`It gives: ${triangle("RBRGBRBGGRRRBGBBBGG")}`);
-console.log("----------------------------------------");
+  return colorReverseMap[rowArray[0]];
+}
