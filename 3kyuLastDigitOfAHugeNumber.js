@@ -9,3 +9,39 @@ function lastDigit(as) {}
 // Corner cases: we assume that 0 ^ 0 = 1 and that lastDigit of an empty list equals to 1.
 
 // This kata generalizes Last digit of a large number; you may find useful to solve it beforehand.
+
+console.log(lastDigit([]));
+console.log(1);
+console.log("");
+console.log(lastDigit([0, 0]));
+console.log(1);
+console.log("");
+console.log(lastDigit([0, 0, 0]));
+console.log(0);
+console.log("");
+console.log(lastDigit([1, 2]));
+console.log(1);
+console.log("");
+console.log(lastDigit([3, 4, 5]));
+console.log(1);
+console.log("");
+console.log(lastDigit([4, 3, 6]));
+console.log(4);
+console.log("");
+console.log(lastDigit([7, 6, 21]));
+console.log(1);
+console.log("");
+console.log(lastDigit([12, 30, 21]));
+console.log(6);
+console.log("");
+console.log(lastDigit([2, 2, 2, 0]));
+console.log(4);
+console.log("");
+console.log(lastDigit([937640, 767456, 981242]));
+console.log(0);
+console.log("");
+console.log(lastDigit([123232, 694022, 140249]));
+console.log(6);
+console.log("");
+console.log(lastDigit([499942, 898102, 846073]));
+console.log(6);
