@@ -1,6 +1,6 @@
 function lastDigit(exponentArray) {
   function minimalEffectiveExponent(exp) {
-    // * (see explanation)
+    // *
     if (exp < 4) return exp;
 
     const expModulus = exp % 4;
@@ -42,21 +42,21 @@ function lastDigit(exponentArray) {
 
 // * All base numbers ending with 0 to 9 have a repeatable last digit pattern result when raised
 // to a given exponent, a pattern that repeats cyclically when the exponent is increased by 4
+// Table of last digit pattern when raised a base number is raised to a given exponent:
 //
-// Table of last digit pattern when raised a base number is raised to the power of
-//
-//     exponents:     1 | 2 3 4 | 5
-// -------------------------------------------------------------------------------
-// base number 0:     0 | 0 0 0 | 0   last digits of base number when raised to exponent above
-// base number 1:     1 | 1 1 1 | 1
-// base number 2:     2 | 4 8 6 | 2
-// base number 3:     3 | 9 7 1 | 3
-// base number 4:     4 | 6 4 6 | 4
-// base number 5:     5 | 5 5 5 | 5
-// base number 6:     6 | 6 6 6 | 6
-// base number 7:     7 | 9 3 1 | 7
-// base number 8:     8 | 4 2 6 | 8
-// base number 9:     9 | 1 9 1 | 9
+//      Exponent:     1 | 2 3 4 | 5
+// --------------------------------------------------------------------------------------------
+// Base number 0:     0 | 0 0 0 | 0    Last digits of base number when raised to exponent above
+// Base number 1:     1 | 1 1 1 | 1
+// Base number 2:     2 | 4 8 6 | 2
+// Base number 3:     3 | 9 7 1 | 3
+// Base number 4:     4 | 6 4 6 | 4
+// Base number 5:     5 | 5 5 5 | 5
+// Base number 6:     6 | 6 6 6 | 6
+// Base number 7:     7 | 9 3 1 | 7
+// Base number 8:     8 | 4 2 6 | 8
+// Base number 9:     9 | 1 9 1 | 9
+
 
 // ** As long as the base number is 100 or above the result won't change when converted via
 // minimalEffectiveExponent in the next iteration, as all digits in the hundreds and above
