@@ -2,87 +2,113 @@ function lastDigit(exponentArray) {
   console.log(exponentArray);
   // *
   function minEffectiveExponent(exp) {
-    console.log(`--- input exponent to minEffectiveExponent: ${exp}`);
+    // console.log(`--- input exponent to minEffectiveExponent: ${exp}`);
     const expModulus = exp % 4;
-    console.log(`--- expModulus: ${expModulus}`);
+    // console.log(`--- expModulus: ${expModulus}`);
 
     if (exp < 4) {
-      console.log(`--- output is exp: ${exp}`);
+      // console.log(`--- output is exp: ${exp}`);
       return exp;
-    } else if (expModulus === 0) {
-      console.log(
-        `--- output exponent of minEffectiveExponent is expModulus + 4: ${expModulus + 4}`
-      );
-      // return expModulus + 4;
-      return 4;
     } else {
-      console.log(`--- output exponent of minEffectiveExponent is expModulus: ${expModulus}`);
-      return expModulus;
+      // console.log(`--- output is expModulus + 4: ${expModulus + 4}`);
+      // return expModulus === 0 ? expModulus + 4 : expModulus;
+      return expModulus === 0 || expModulus == 1 ? expModulus + 4 : expModulus;
     }
   }
 
-  function minEffectiveBase(num) {
-    const numStr = num.toString().split("");
-    if (numStr.length === 1 || numStr.length === 2) return num;
-    let index;
+  function minEffectiveBase(base, exponent) {
+    // console.log(`base ${base}`)
+    // include the full base or the minimal base that holds at least two ciphers and where the result is at minimum 3 ciphers as any 3 cipher base number generate the same minimal effective exponent for the next cycle
+    const baseStr = base.toString().split("");
 
-    for (let i = numStr.length - 3; i > 0; i--) {
-      if (numStr[i] !== "0") {
-        index = i;
-        break;
+    if (baseStr.length === 1 || baseStr.length === 2) return base;
+    let minTestBase;
+
+    for (let i = baseStr.length - 2; i >= 0; i--) {
+      // console.log(`i: ${i}`)
+      if (baseStr[i] !== "0") {
+        minTestBase = baseStr.slice(i).join("");
+        // console.log(`minTestBase: ${minTestBase}`)
+        if (minTestBase ** exponent >= 100) {
+          break;
+        }
       }
     }
+    // console.log(`*** minEffectiveBase output is minTestBase: ${minTestBase}`);
 
-    console.log(`minEffectiveBase is: ${Number(numStr.slice(index).join(""))}`)
-
-    return Number(numStr.slice(index).join(""));
+    return minTestBase;
   }
 
   // let lastDigitOfBaseRaised = 1;
-  let accumulativeExponent = 1;
+  let exponent = 1;
+  let minimalExponent = 1;
+  let minimalBase;
 
   for (let i = exponentArray.length - 1; i >= 0; i--) {
-    console.log(`before operations:`);
+    // console.log(`before operations:`);
     console.log(`i: ${i}`);
-    console.log(`current base: ${exponentArray[i]}`);
-    console.log(`current exponent: ${accumulativeExponent}`);
+    const currentBase = exponentArray[i];
+    console.log(`current base: ${currentBase}`);
 
-    const minimalBase = minEffectiveBase(exponentArray[i]);
-    const minimalExponent = minEffectiveExponent(accumulativeExponent);
+    minimalBase = minEffectiveBase(currentBase, minimalExponent);
     console.log(`minimalBase: ${minimalBase}`);
+    
+    
+    console.log(`minimalExponent: ${minimalBase}`);
+
+    exponent = minimalBase ** minimalExponent;
+    console.log(`exponent: ${exponent}`);
+    
+    minimalExponent = minEffectiveExponent(exponent);
     console.log(`minimalExponent: ${minimalExponent}`);
+    console.log(``);
+    
+    // const minimalEffectiveExponent = minEffectiveExponent(minimalExponent)
+    // console.log(`minimal effective Exponent: ${minimalExponent}`);
 
-    // const fullTestExponent = exponentArray[i] ** (accumulativeExponent);
+    // const currentMinEffectiveBase = minEffectiveBase(currentBase, minimalExponent)
+    // console.log(`current minimal effectiveBase: ${currentMinEffectiveBase}`);
 
-    accumulativeExponent = minimalBase ** minimalExponent;
-    console.log(``);
-    console.log(`accumulativeExponent after: ${accumulativeExponent}`);
+    // console.log(`current exponent: ${minimalExponent}`);
 
-    accumulativeExponent = minEffectiveExponent(accumulativeExponent);
-    console.log(``);
-    console.log(`minimal accumulativeExponent: ${accumulativeExponent}`);
-    console.log(``);
-    console.log(``);
+    // // let minimalExponent = minEffectiveExponent(minimalExponent);
+    // minimalExponent = minEffectiveExponent(minimalBase ** minimalExponent);
+
+    // minimalBase = minEffectiveBase(exponentArray[i], minimalExponent);
+    // console.log(`minimalBase: ${minimalBase}`);
+    // // console.log(`minimalExponent: ${minimalExponent}`);
+
+    // // const fullTestExponent = exponentArray[i] ** (minimalExponent);
+
+    // // console.log(``);
+    // console.log(`minimalExponent after: ${minimalExponent}`);
+
+    // minimalExponent = minEffectiveExponent(minimalExponent);
+    // // console.log(``);
+    // console.log(`minimal minimalExponent: ${minimalExponent}`);
+    // // console.log(``);
+    // console.log(``);
   }
 
-  return accumulativeExponent % 10;
+  return exponent % 10;
 }
 
 // * All base numbers that ends with 0 to 9 have a repeatable last digit pattern result when
 // raised to a given power/exponent, a pattern that repeats when the exponent is increased by 4
 // Table of last digit pattern when raised a base number is raised to the power of
-//     exponent: 1 | 2 3 4 | 5
-// ------------------------------------
-//  base number: 0 | 0 0 0 | 0  last digit of base when raised to exponent above
-//               1 | 1 1 1 | 1
-//               2 | 4 8 6 | 2
-//               3 | 9 7 1 | 3
-//               4 | 6 4 6 | 4
-//               5 | 5 5 5 | 5
-//               6 | 6 6 6 | 6
-//               7 | 9 3 1 | 7
-//               8 | 4 2 6 | 8
-//               9 | 1 9 1 | 9
+//
+// exponents: 1 | 2 3 4 | 5
+// -------------------------------------------------------------------------------
+// base 0     0 | 0 0 0 | 0  last digits of base when raised to exponents above
+// base 1     1 | 1 1 1 | 1
+// base 2     2 | 4 8 6 | 2
+// base 3     3 | 9 7 1 | 3
+// base 4     4 | 6 4 6 | 4
+// base 5     5 | 5 5 5 | 5
+// base 6     6 | 6 6 6 | 6
+// base 7     7 | 9 3 1 | 7
+// base 8     8 | 4 2 6 | 8
+// base 9     9 | 1 9 1 | 9
 
 // For a given list [x1, x2, x3, ..., xn] compute the last (decimal) digit of x1 ^ (x2 ^ (x3 ^ (... ^ xn))).
 
@@ -160,3 +186,8 @@ console.log("------------");
 
 console.log(lastDigit([499942, 898102, 846073]));
 console.log(6);
+console.log("------------");
+
+console.log(lastDigit([82242, 254719, 736371]));
+console.log(8);
+console.log("------------");
