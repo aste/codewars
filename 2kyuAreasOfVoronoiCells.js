@@ -1,10 +1,8 @@
 // Find the areas of the Voronoi cells associated with the Point objects in the array p.
 
-function voronoi_areas(p)
-{
-
+function voronoi_areas(p) {
+  return 1;
 }
-
 
 // Given a set of "seed points" in the plane, we can make a pattern called a Voronoi tessellation:
 
@@ -22,11 +20,31 @@ function voronoi_areas(p)
 
 // Note. The seed points are passed using the following Point structure.
 
-// class Point
-// {
-//  constructor(x,y)
-//  {
-//   this.x = x;
-//   this.y = y;
-//  }
-// }
+class Point {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+}
+
+let ptSetOne = [
+  new Point(0.0, 0.0),
+  new Point(2.0, 0.0),
+  new Point(-2.0, 0.0),
+  new Point(0.0, 2.0),
+  new Point(0.0, -2.0),
+];
+console.log(voronoi_areas(ptSetOne));
+console.log([4.0, -1, -1, -1, -1]);
+
+let ptSetTwo = [
+  new Point(2.0, 1.0),
+  new Point(2.0, -1.0),
+  new Point(4.4, 2.2),
+  new Point(4.4, -2.2),
+  new Point(-0.4, 2.2),
+  new Point(-0.4, -2.2),
+];
+
+console.log(voronoi_areas(ptSetTwo));
+console.log([8, 8, -1, -1, -1, -1]);
