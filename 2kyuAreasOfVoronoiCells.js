@@ -4,6 +4,10 @@ function voronoi_areas(p) {
   return 1;
 }
 
+// Fortune's Algorithm
+// Sweep Line Algorithm
+// Discard Cell Algorithm
+
 // Given a set of "seed points" in the plane, we can make a pattern called a Voronoi tessellation:
 
 // Voronoi pattern
@@ -16,7 +20,8 @@ function voronoi_areas(p) {
 
 // This is a straightforward exercise, if tackled the right way. If you find yourself writing very complicated code, step back and take another look. :)
 
-// Hints. 1. The Voronoi cells can be subdivided into triangles. 2. It is not necessary to use square roots or trigonometric functions.
+// Hint 1. The Voronoi cells can be subdivided into triangles.
+// Hint 2. It is not necessary to use square roots or trigonometric functions.
 
 // Note. The seed points are passed using the following Point structure.
 
@@ -34,6 +39,7 @@ let ptSetOne = [
   new Point(0.0, 2.0),
   new Point(0.0, -2.0),
 ];
+
 console.log(voronoi_areas(ptSetOne));
 console.log([4.0, -1, -1, -1, -1]);
 
