@@ -1,5 +1,117 @@
 function solvePuzzle(clues) {
-  // Start your coding here...
+  if (clues.length % 4 !== 0) return;
+  const gridSize = clues.length / 4;
+  const cellValue = () => new Set(Array.from({ length: gridSize }, (_, i) => i + 1));
+
+  
+  const grid = Array(gridSize)
+  .fill(null)
+  .map(() => Array(gridSize).fill(null).map(cellValue));
+  
+  // Fill grid/fields with values
+  function fillGrid(rowCoord, colCoord) {
+    
+  }
+
+  // Map grid to clues (and maybe map clues to grid)
+
+  // Check for a total in both ends of the clue array that is "Size" + 1 in total, locks a max 
+
+  // Check for max/gridSize value and minimum value/1 in clue stats
+
+  // Fill the 
+  
+  // Check if grid includes size - 1 of any number and place that number deterministically
+
+  // Nested Loop
+
+
+  
+  // const rowClues = {};
+  // const columnClues = {};
+  // //   const clues1 = [0, 0, 0, 2, 2, 0, 0, 0, 0, 6, 3, 0, 0, 4, 0, 0, 0, 0, 4, 4, 0, 3, 0, 0];
+  // //   const cluMap = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+
+  // //   const testClues1 = [
+  // //     [0, 0, 0, 2, 2, 0],
+  // //     [0, 0, 0, 6, 3, 0],
+  // //     [0, 0, 0, 0, 4, 0],
+  // //     [0, 0, 3, 0, 4, 4],
+  // //   ];
+  // console.log(`clues: ${clues}`);
+  // function populateClues(cluesArr) {
+  //   const quarterLen = cluesArr.length / 4;
+  //   const colStartClueValues = cluesArr.slice(0, quarterLen);
+  //   const colEndClueValues = cluesArr.slice(quarterLen * 2, quarterLen * 3).reverse();
+  //   const rowStartClueValues = cluesArr.slice(quarterLen * 3, quarterLen * 4).reverse();
+  //   const rowEndClueValues = cluesArr.slice(quarterLen, quarterLen * 2);
+
+  //   for (let i = 0; i < quarterLen; i++) {
+  //     columnClues[i] = [colStartClueValues[i], colEndClueValues[i]];
+  //     rowClues[i] = [rowStartClueValues[i], rowEndClueValues[i]];
+  //   }
+
+  //   // console.log(`colStartClueValues: ${colStartClueValues}`);
+  //   // console.log(`colEndClueValues: ${colEndClueValues}`);
+  //   // console.log(`rowStartClueValues: ${rowStartClueValues}`);
+  //   // console.log(`rowEndClueValues: ${rowEndClueValues}`);
+  // }
+
+  // populateClues(clues);
+  // console.log(`rowClues:`);
+  // console.log(rowClues);
+  // console.log(`columnClues:`);
+  // console.log(columnClues);
+  // console.log(``);
+
+  //   const testBlankWithClues1 = [
+  //     [0, 0, 0, 2, 2, 0]
+  //   0 [0, 0, 0, 5, 0, 0], 0
+  //   0 [0, 0, 0, 0, 0, 0], 0
+  //   3 [0, 0, 0, 0, 0, 0], 0
+  //   0 [6, 5, 4, 3, 2, 1], 6
+  //   4 [0, 0, 0, 6, 0, 0], 3
+  //   4 [0, 0, 0, 0, 0, 0], 0
+  //     [0, 0, 0, 0, 4, 0]
+  //   ];
+
+  //   const testResult1 = [
+  //    [5, 6, 1, 4, 3, 2],
+  //    [4, 1, 3, 2, 6, 5],
+  //    [2, 3, 6, 1, 5, 4],
+  //    [6, 5, 4, 3, 2, 1],
+  //    [1, 2, 5, 6, 4, 3],
+  //    [3, 4, 2, 5, 1, 6],
+  //   ];
+
+  //   const testClues2 = [
+  //     [3, 2, 2, 3, 2, 1],
+  //     [1, 2, 3, 3, 2, 2],
+  //     [5, 1, 2, 2, 4, 3],
+  //     [3, 2, 1, 2, 2, 4],
+  //   ];
+
+  //   const testBlankWithClues2 = [
+  //     [3, 2, 2, 3, 2, 1]
+  //   4 [0, 0, 0, 0, 0, 0], 1
+  //   2 [0, 0, 0, 0, 0, 0], 2
+  //   2 [0, 0, 0, 0, 0, 0], 3
+  //   1 [0, 0, 0, 0, 0, 0], 3
+  //   2 [0, 0, 0, 0, 0, 0], 2
+  //   3 [0, 0, 0, 0, 0, 0], 2
+  //     [3, 4, 2, 2, 1, 5]
+  //   ];
+
+  //   const testResult2 = [
+  //     [2, 1, 4, 3, 5, 6],
+  //     [1, 6, 3, 2, 4, 5],
+  //     [4, 3, 6, 5, 1, 2],
+  //     [6, 5, 2, 1, 3, 4],
+  //     [5, 4, 1, 6, 2, 3],
+  //     [3, 2, 5, 4, 6, 1],
+  //   ];
+
+  return 1;
 }
 
 const clue1 = [3, 2, 2, 3, 2, 1, 1, 2, 3, 3, 2, 2, 5, 1, 2, 2, 4, 3, 3, 2, 1, 2, 2, 4];
@@ -32,16 +144,19 @@ const expected3 = [
   [1, 5, 4, 3, 2, 6],
 ];
 
-console.log(expected1);
-console.log(solvePuzzle(clue1));
+// console.log(expected1);
+// console.log(solvePuzzle(clue1));
+solvePuzzle(clue1);
 console.log("");
 
-console.log(expected2);
-console.log(solvePuzzle(clue2));
+// console.log(expected2);
+// console.log(solvePuzzle(clue2));
+solvePuzzle(clue2);
 console.log("");
 
-console.log(expected3);
-console.log(solvePuzzle(clue3));
+// console.log(expected3);
+// console.log(solvePuzzle(clue3));
+solvePuzzle(clue3);
 console.log("");
 
 // Description:
