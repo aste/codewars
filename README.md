@@ -1,2 +1,3 @@
 # codewars
-My solutions for the challenges im doing on codewars.com
+My solutions for [Codewars Challenges](https://www.codewars.com/users/asteploug/completed_solutions)
+
