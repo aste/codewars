@@ -1,32 +1,36 @@
 function solvePuzzle(clues) {
   if (clues.length % 4 !== 0) return;
+
+  // Construct grid and fill cells with all potential values
   const gridSize = clues.length / 4;
   const cellValue = () => new Set(Array.from({ length: gridSize }, (_, i) => i + 1));
-
-  
   const grid = Array(gridSize)
-  .fill(null)
-  .map(() => Array(gridSize).fill(null).map(cellValue));
-  
-  // Fill grid/fields with values
-  function fillGrid(rowCoord, colCoord) {
-    
-  }
+    .fill(null)
+    .map(() => Array(gridSize).fill(null).map(cellValue));
+
+  // Traverse row
+
+  // Traverse column
+
+  // Remove value from cell
+  const removeCellValue = (rowCoord, colCoord, value) => grid[rowCoord][colCoord].delete(value);
+
+  // Insert a single value in cell
+
+  // Remove value from columns and rows
 
   // Map grid to clues (and maybe map clues to grid)
 
-  // Check for a total in both ends of the clue array that is "Size" + 1 in total, locks a max 
+  // Check for a total in both ends of the clue array that is "Size" + 1 in total, locks a max
 
   // Check for max/gridSize value and minimum value/1 in clue stats
 
-  // Fill the 
-  
+  // Fill the
+
   // Check if grid includes size - 1 of any number and place that number deterministically
 
   // Nested Loop
 
-
-  
   // const rowClues = {};
   // const columnClues = {};
   // //   const clues1 = [0, 0, 0, 2, 2, 0, 0, 0, 0, 6, 3, 0, 0, 4, 0, 0, 0, 0, 4, 4, 0, 3, 0, 0];
@@ -114,25 +118,25 @@ function solvePuzzle(clues) {
   return 1;
 }
 
-const clue1 = [3, 2, 2, 3, 2, 1, 1, 2, 3, 3, 2, 2, 5, 1, 2, 2, 4, 3, 3, 2, 1, 2, 2, 4];
-const expected1 = [
-  [2, 1, 4, 3, 5, 6],
-  [1, 6, 3, 2, 4, 5],
-  [4, 3, 6, 5, 1, 2],
-  [6, 5, 2, 1, 3, 4],
-  [5, 4, 1, 6, 2, 3],
-  [3, 2, 5, 4, 6, 1],
-];
+// const clue1 = [3, 2, 2, 3, 2, 1, 1, 2, 3, 3, 2, 2, 5, 1, 2, 2, 4, 3, 3, 2, 1, 2, 2, 4];
+// const expected1 = [
+//   [2, 1, 4, 3, 5, 6],
+//   [1, 6, 3, 2, 4, 5],
+//   [4, 3, 6, 5, 1, 2],
+//   [6, 5, 2, 1, 3, 4],
+//   [5, 4, 1, 6, 2, 3],
+//   [3, 2, 5, 4, 6, 1],
+// ];
 
-const clue2 = [0, 0, 0, 2, 2, 0, 0, 0, 0, 6, 3, 0, 0, 4, 0, 0, 0, 0, 4, 4, 0, 3, 0, 0];
-const expected2 = [
-  [5, 6, 1, 4, 3, 2],
-  [4, 1, 3, 2, 6, 5],
-  [2, 3, 6, 1, 5, 4],
-  [6, 5, 4, 3, 2, 1],
-  [1, 2, 5, 6, 4, 3],
-  [3, 4, 2, 5, 1, 6],
-];
+// const clue2 = [0, 0, 0, 2, 2, 0, 0, 0, 0, 6, 3, 0, 0, 4, 0, 0, 0, 0, 4, 4, 0, 3, 0, 0];
+// const expected2 = [
+//   [5, 6, 1, 4, 3, 2],
+//   [4, 1, 3, 2, 6, 5],
+//   [2, 3, 6, 1, 5, 4],
+//   [6, 5, 4, 3, 2, 1],
+//   [1, 2, 5, 6, 4, 3],
+//   [3, 4, 2, 5, 1, 6],
+// ];
 
 const clue3 = [0, 3, 0, 5, 3, 4, 0, 0, 0, 0, 0, 1, 0, 3, 0, 3, 2, 3, 3, 2, 0, 3, 1, 0];
 const expected3 = [
@@ -146,13 +150,13 @@ const expected3 = [
 
 // console.log(expected1);
 // console.log(solvePuzzle(clue1));
-solvePuzzle(clue1);
-console.log("");
+// solvePuzzle(clue1);
+// console.log("");
 
 // console.log(expected2);
 // console.log(solvePuzzle(clue2));
-solvePuzzle(clue2);
-console.log("");
+// solvePuzzle(clue2);
+// console.log("");
 
 // console.log(expected3);
 // console.log(solvePuzzle(clue3));
