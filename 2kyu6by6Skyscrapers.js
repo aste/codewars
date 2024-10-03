@@ -8,18 +8,32 @@ function solvePuzzle(clues) {
     .fill(null)
     .map(() => Array(gridSize).fill(null).map(cellValue));
 
-  // Traverse row
-
-  // Traverse column
 
   // Remove value from cell
   const removeCellValue = (rowCoord, colCoord, value) => grid[rowCoord][colCoord].delete(value);
 
+  // Remove value from row and column
+  const removeValueInRowAndCol = (rowCoord, colCoord, value) => {
+    for (let i = 0; i < gridSize; i++) {
+      removeCellValue(i, colCoord, value);
+      removeCellValue(rowCoord, i, value);
+    }
+  };
+
   // Insert a single value in cell
-
-  // Remove value from columns and rows
-
+  const insertSingleCellValue = (rowCoord, colCoord, value) => {
+    removeValueInRowAndCol(rowCoord, colCoord, value);
+    grid[rowCoord][colCoord].clear();
+    grid[rowCoord][colCoord].add(value);
+  };
+  
   // Map grid to clues (and maybe map clues to grid)
+
+
+  // insertSingleCellValue(0, 0, 6);
+  // console.log(grid);
+
+
 
   // Check for a total in both ends of the clue array that is "Size" + 1 in total, locks a max
 
