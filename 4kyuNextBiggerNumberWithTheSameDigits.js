@@ -16,9 +16,6 @@ function nextBigger(num) {
   let result = -1;
 
   for (let i = arrOfDigits.length - 1; i >= 0; i--) {
-    console.log(`previousDigit: ${previousDigit}`);
-    console.log(`arrOfDigits[i]: ${arrOfDigits[i]}`);
-    console.log(`previousDigit > arrOfDigits[i]: ${previousDigit > arrOfDigits[i]}`);
 
     if (previousDigit > arrOfDigits[i]) {
       const leadingDigits = arrOfDigits.slice(0, i);
@@ -27,18 +24,10 @@ function nextBigger(num) {
       let smallestLargerThanPivot = Math.min(...[...trailingDigits].filter((val) => val > pivotDigit));
       let newPivot = trailingDigits.splice(trailingDigits.indexOf(smallestLargerThanPivot), 1);
 
-      console.log(`i: ${i}`);
-      console.log(`pivotDigit: ${pivotDigit}`);
-      console.log(`trailingDigits: ${trailingDigits}`);
-      console.log(`smallestLargerThanPivot: ${smallestLargerThanPivot}`);
-      console.log(`newPivot: ${newPivot}`);
       leadingDigits.push(smallestLargerThanPivot);
       trailingDigits.push(pivotDigit);
       trailingDigits.sort((a, b) => a - b);
-      console.log(`trailingDigits: ${trailingDigits}`);
-      console.log(``);
 
-      console.log(`leadingDigits: ${leadingDigits}`);
       result = Number(leadingDigits.concat(trailingDigits).join(""));
       break;
     }
@@ -47,13 +36,3 @@ function nextBigger(num) {
   }
   return result;
 }
-
-console.log(`------------------------------nextBigger(12), should be 21: ${nextBigger(12)}`);
-console.log(`------------------------------nextBigger(513), should be 531: ${nextBigger(513)}`);
-console.log(`------------------------------nextBigger(2017), should be 2071: ${nextBigger(2017)}`);
-console.log(`------------------------------nextBigger(414), should be 441: ${nextBigger(414)}`);
-console.log(
-  `------------------------------nextBigger(3151350061), should be 3151350106: ${nextBigger(
-    3151350061
-  )}`
-);
