@@ -11,46 +11,6 @@
 // 531 ==> -1
 
 function nextBigger(num) {
-  let result = -1;
-  if (
-    num ===
-    Number(
-      num
-        .toString()
-        .split("")
-        .sort((a, b) => b - a)
-        .join("")
-    )
-  ) {
-    return result;
-  }
-  const arrOfDigits = num.toString().split("").map(Number);
-  let nextRightDigit;
-
-  for (let i = arrOfDigits.length - 1; i >= 0; i--) {
-    if (nextRightDigit > arrOfDigits[i]) {
-      const leadingDigits = [...arrOfDigits].slice(0, i);
-      let pivotDigit = arrOfDigits[i];
-      let trailingDigits = [...arrOfDigits].slice(i + 1);
-      let smallestLargerThanPivot = Math.min(
-        ...[...trailingDigits].filter((val) => val > pivotDigit)
-      );
-      let indexOfSmallestLarger = trailingDigits.indexOf(smallestLargerThanPivot);
-      let newTrailingDigits = trailingDigits
-        .filter((_, idx) => idx !== indexOfSmallestLarger)
-        .concat(pivotDigit)
-        .sort((a, b) => a - b);
-
-      result = Number(leadingDigits.concat(smallestLargerThanPivot, newTrailDigits).join(""));
-      break;
-    }
-
-    nextRightDigit = arrOfDigits[i];
-  }
-  return result;
-}
-
-function nextBigger(num) {
   const digits = num.toString().split("").map(Number);
   if (digits.join("") === [...digits].sort((a, b) => b - a).join("")) return -1;
 
