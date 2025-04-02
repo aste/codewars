@@ -1,46 +1,43 @@
 function solvePuzzle(clues) {
+  // Check grid validity, set grid size, construct and fill grid
   if (clues.length % 4 !== 0) return;
-
-  // Construct grid and fill cells with all potential values
   const gridSize = clues.length / 4;
-  const cellValue = () => new Set(Array.from({ length: gridSize }, (_, i) => i + 1));
   const grid = Array(gridSize)
     .fill(null)
-    .map(() => Array(gridSize).fill(null).map(cellValue));
+    .map(() => Array(gridSize).fill(0));
 
   // Map Clues
-  const rowStartClue = clues.slice(gridSize * 3, gridSize * 4).reverse();
-  const rowEndClue = clues.slice(gridSize, gridSize * 2);
-  const colStartClue = clues.slice(0, gridSize);
-  const colEndClue = clues.slice(gridSize * 2, gridSize * 3).reverse();
+  const leftRowClues = clues.slice(gridSize * 3, gridSize * 4).reverse();
+  const rightRowClues = clues.slice(gridSize, gridSize * 2);
+  const topColumnClues = clues.slice(0, gridSize);
+  const bottomColumnClues = clues.slice(gridSize * 2, gridSize * 3).reverse();
 
-  // Remove value from cell
-  const removeCellValue = (rowCoord, colCoord, value) => grid[rowCoord][colCoord].delete(value);
+  // Track Numerical Values Used
+  const usedInRow = Array(gridSize)
+    .fill(null)
+    .map(() => new Set());
+  const usedInColumn = Array(gridSize)
+    .fill(null)
+    .map(() => new Set());
 
-  // Remove value from row and column
-  const removeValueInRowAndCol = (rowCoord, colCoord, value) => {
-    for (let i = 0; i < gridSize; i++) {
-      removeCellValue(i, colCoord, value);
-      removeCellValue(rowCoord, i, value);
-    }
+
+  // Insert cell value
+  const insertCellValue = (row, col, val) => {
+    grid[row][col] = val;
+    usedInRow[row].add(val);
+    usedInColumn[col].add(val);
   };
 
-  // Insert a single value in cell
-  const insertSingleCellValue = (rowCoord, colCoord, value) => {
-    removeValueInRowAndCol(rowCoord, colCoord, value);
-    grid[rowCoord][colCoord].clear();
-    grid[rowCoord][colCoord].add(value);
-  };
+  // Remove cell value
+  const removeCellValue = (row, col, val) => {
+    grid[row][col] = 0;
+    usedInRow[row].delete(val);
+    usedInColumn[col].delete(val);
+  }
 
-  // Insert a full row or column
-  const fillRowOrColumn = (startRowCoord, startColCoord) => {
-    // for (let i = 0; i < gridSize; i++) {
-    //   removeCellValue(i, colCoord, value);
-    //   removeCellValue(rowCoord, i, value);
-    // }
-  };
 
-  insertSingleCellValue(0, 0, 6);
+
+
   console.log(grid);
 }
 
