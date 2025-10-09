@@ -20,7 +20,6 @@ function solvePuzzle(clues) {
     .fill(null)
     .map(() => new Set());
 
-
   // Insert cell value
   const insertCellValue = (row, col, val) => {
     grid[row][col] = val;
@@ -33,10 +32,22 @@ function solvePuzzle(clues) {
     grid[row][col] = 0;
     usedInRow[row].delete(val);
     usedInColumn[col].delete(val);
-  }
+  };
 
+  // Insert a full row or column
+  // const fillRowOrColumn = (startRowCoord, startColCoord) => {
+  //   for (let i = 0; i < gridSize; i++) {
+  //     removeCellValue(i, colCoord, value);
+  //     removeCellValue(rowCoord, i, value);
+  //   }
+  // };
 
+  // In case we need to guess save the current board with the values we are sure are correct as a reference backup point we might need to come back to
 
+  // if 6 fill full row
+  // if 1 fill 6 in first slot
+
+  // would it be better to add all possible values in a cell and gradually remove them as they become invalid options or would it be better to only fill the values in a cell, once we are sure we need to use that specific value
 
   console.log(grid);
 }
@@ -61,8 +72,7 @@ function solvePuzzle(clues) {
 //   [3, 4, 2, 5, 1, 6],
 // ];
 
-// const clue3 = [0, 3, 0, 5, 3, 4, 0, 0, 0, 0, 0, 1, 0, 3, 0, 3, 2, 3, 3, 2, 0, 3, 1, 0];
-const clue3 = [0, 3, 0, 5, 3, 4, 0, 0, 0, 0, 0, 1, 0, 3, 6, 3, 2, 3, 3, 2, 0, 3, 1, 0];
+const clue3 = [0, 3, 0, 5, 3, 4, 0, 0, 0, 0, 0, 1, 0, 3, 0, 3, 2, 3, 3, 2, 0, 3, 1, 0];
 const expected3 = [
   [5, 2, 6, 1, 4, 3],
   [6, 4, 3, 2, 5, 1],
@@ -71,6 +81,30 @@ const expected3 = [
   [4, 3, 2, 6, 1, 5],
   [1, 5, 4, 3, 2, 6],
 ];
+
+// const clue3 = [0, 3, 0, 5, 3, 4, 0, 0, 0, 0, 0, 1, 0, 3, 0, 3, 2, 3, 3, 2, 0, 3, 1, 0];
+// const expected3 = [
+//      0  3  0  5  3  4
+//   0 [5, 2, 6, 1, 4, 3], 0
+//   1 [6, 4, 3, 2, 5, 1], 0
+//   3 [3, 1, 5, 4, 6, 2], 0
+//   0 [2, 6, 1, 5, 3, 4], 0
+//   2 [4, 3, 2, 6, 1, 5], 0
+//   3 [1, 5, 4, 3, 2, 6], 1
+//      3  2  3  0  3  0
+// ];
+
+// const clue3 = [0, 3, 0, 5, 3, 4, 0, 0, 0, 0, 0, 1, 0, 3, 0, 3, 2, 3, 3, 2, 0, 3, 1, 0];
+// const expected3 = [
+//      0  3  0  5  3  4
+//   0 [0, 0, 0, 0, 0, 0], 0
+//   1 [0, 0, 0, 0, 0, 0], 0
+//   3 [0, 0, 0, 0, 0, 0], 0
+//   0 [0, 0, 0, 0, 0, 0], 0
+//   2 [0, 0, 0, 0, 0, 0], 0
+//   3 [0, 0, 0, 0, 0, 0], 1
+//      3  2  3  0  3  0
+// ];
 
 // console.log(expected1);
 // console.log(solvePuzzle(clue1));
@@ -110,7 +144,8 @@ console.log("");
 // Example of a 6 by 6 puzzle with the solution:
 
 //   	   	   	   	2	2
-
+//
+//
 //  3
 //   	  	  	  	  	  	  	 6
 //  4	  	  	  	  	  	  	 3
