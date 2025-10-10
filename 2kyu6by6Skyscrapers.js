@@ -44,33 +44,19 @@ function solvePuzzle(clues) {
 
   // In case we need to guess save the current board with the values we are sure are correct as a reference backup point we might need to come back to
 
-  // if 6 fill full row
+  // if 6 fill full row/column with 1 to 6
+  // count visible tower in a row/column
+  // if clue is visible tower count plus 1, place the tallest remaining tower the 
+
   // if 1 fill 6 in first slot
+
+  // clue from either side is grid size plus one e.g. 3 and 4 in a 6x6 grid then we know the placement of the six tower
+  // 
 
   // would it be better to add all possible values in a cell and gradually remove them as they become invalid options or would it be better to only fill the values in a cell, once we are sure we need to use that specific value
 
   console.log(grid);
 }
-
-// const clue1 = [3, 2, 2, 3, 2, 1, 1, 2, 3, 3, 2, 2, 5, 1, 2, 2, 4, 3, 3, 2, 1, 2, 2, 4];
-// const expected1 = [
-//   [2, 1, 4, 3, 5, 6],
-//   [1, 6, 3, 2, 4, 5],
-//   [4, 3, 6, 5, 1, 2],
-//   [6, 5, 2, 1, 3, 4],
-//   [5, 4, 1, 6, 2, 3],
-//   [3, 2, 5, 4, 6, 1],
-// ];
-
-// const clue2 = [0, 0, 0, 2, 2, 0, 0, 0, 0, 6, 3, 0, 0, 4, 0, 0, 0, 0, 4, 4, 0, 3, 0, 0];
-// const expected2 = [
-//   [5, 6, 1, 4, 3, 2],
-//   [4, 1, 3, 2, 6, 5],
-//   [2, 3, 6, 1, 5, 4],
-//   [6, 5, 4, 3, 2, 1],
-//   [1, 2, 5, 6, 4, 3],
-//   [3, 4, 2, 5, 1, 6],
-// ];
 
 const clue3 = [0, 3, 0, 5, 3, 4, 0, 0, 0, 0, 0, 1, 0, 3, 0, 3, 2, 3, 3, 2, 0, 3, 1, 0];
 const expected3 = [
@@ -96,6 +82,18 @@ const expected3 = [
 
 // const clue3 = [0, 3, 0, 5, 3, 4, 0, 0, 0, 0, 0, 1, 0, 3, 0, 3, 2, 3, 3, 2, 0, 3, 1, 0];
 // const expected3 = [
+//         3     5  3  4
+//     [0, 0, 0, 0, 0, 0],  
+//   1 [6, 0, 0, 0, 0, 0],  
+//   3 [0, 0, 0, 0, 0, 0],  
+//     [0, 0, 0, 0, 0, 0],  
+//   2 [0, 0, 0, 6, 0, 0],  
+//   3 [0, 0, 0, 0, 0, 6], 1  
+//      3  2  3     3  
+// ];
+
+// const clue3 = [0, 3, 0, 5, 3, 4, 0, 0, 0, 0, 0, 1, 0, 3, 0, 3, 2, 3, 3, 2, 0, 3, 1, 0];
+// const expected3 = [
 //      0  3  0  5  3  4
 //   0 [0, 0, 0, 0, 0, 0], 0
 //   1 [0, 0, 0, 0, 0, 0], 0
@@ -105,6 +103,31 @@ const expected3 = [
 //   3 [0, 0, 0, 0, 0, 0], 1
 //      3  2  3  0  3  0
 // ];
+
+
+
+
+// const clue1 = [3, 2, 2, 3, 2, 1, 1, 2, 3, 3, 2, 2, 5, 1, 2, 2, 4, 3, 3, 2, 1, 2, 2, 4];
+// const expected1 = [
+//   [2, 1, 4, 3, 5, 6],
+//   [1, 6, 3, 2, 4, 5],
+//   [4, 3, 6, 5, 1, 2],
+//   [6, 5, 2, 1, 3, 4],
+//   [5, 4, 1, 6, 2, 3],
+//   [3, 2, 5, 4, 6, 1],
+// ];
+
+// const clue2 = [0, 0, 0, 2, 2, 0, 0, 0, 0, 6, 3, 0, 0, 4, 0, 0, 0, 0, 4, 4, 0, 3, 0, 0];
+// const expected2 = [
+//   [5, 6, 1, 4, 3, 2],
+//   [4, 1, 3, 2, 6, 5],
+//   [2, 3, 6, 1, 5, 4],
+//   [6, 5, 4, 3, 2, 1],
+//   [1, 2, 5, 6, 4, 3],
+//   [3, 4, 2, 5, 1, 6],
+// ];
+
+
 
 // console.log(expected1);
 // console.log(solvePuzzle(clue1));
