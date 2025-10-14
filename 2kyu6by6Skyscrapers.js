@@ -7,10 +7,10 @@ function solvePuzzle(clues) {
     .map(() => Array(gridSize).fill(0));
 
   // Map Clues
-  const leftRowClues = clues.slice(gridSize * 3, gridSize * 4).reverse();
-  const rightRowClues = clues.slice(gridSize, gridSize * 2);
   const topColumnClues = clues.slice(0, gridSize);
   const bottomColumnClues = clues.slice(gridSize * 2, gridSize * 3).reverse();
+  const leftRowClues = clues.slice(gridSize * 3, gridSize * 4).reverse();
+  const rightRowClues = clues.slice(gridSize, gridSize * 2);
 
   // Track Numerical Values Used
   const usedInRow = Array(gridSize)
@@ -20,19 +20,40 @@ function solvePuzzle(clues) {
     .fill(null)
     .map(() => new Set());
 
+  // Deduction value from solution space
+  const deductValueFromRow = (row, val) => usedInRow[row].add(val);
+  const deductValueFromCol = (col, val) => usedInColumn[col].add(val);
+
   // Insert cell value
   const insertCellValue = (row, col, val) => {
     grid[row][col] = val;
-    usedInRow[row].add(val);
-    usedInColumn[col].add(val);
+    deductValueFromRow(row, val);
+    deductValueFromCol(col, val);
   };
 
-  // Remove cell value
-  const removeCellValue = (row, col, val) => {
-    grid[row][col] = 0;
-    usedInRow[row].delete(val);
-    usedInColumn[col].delete(val);
+  // Check for the inversion of the tracked numbers for deduction resulting in a single value
+  const checkForDeductionValues = (row, col) => {
+    if (grid[row][col] !== 0) return;
+
+    let allPotentialValues = Array.from({ length: gridSize }, (_, i) => i + 1);
+
+    const possibleValues = allPotentialValues.filter(
+      (val) => !usedInRow[row].has(val) && !usedInColumn[col].has(val)
+    );
+
+    if (possibleValues.length === 1) {
+      insertCellValue(row, col, possibleValues[0]);
+    }
   };
+
+  // When all deterministic approaches have been explored, save the board, save the tracked numbers, for potential future backtracking
+
+  // Remove cell value (might be better to save the 100% deterministic solution and backtrack later, if the guess doesn't lead to any outcome)
+  // const removeCellValue = (row, col, val) => {
+  //   grid[row][col] = 0;
+  //   usedInRow[row].delete(val);
+  //   usedInColumn[col].delete(val);
+  // };
 
   // Insert a full row or column
   // const fillRowOrColumn = (startRowCoord, startColCoord) => {
@@ -42,16 +63,23 @@ function solvePuzzle(clues) {
   //   }
   // };
 
+  const fillRow = (clueIndex, reverseDirection) => {
+    for (let i = 0; i < gridSize; i++) {
+      removeCellValue(i, colCoord, value);
+      removeCellValue(rowCoord, i, value);
+    }
+  };
+
   // In case we need to guess save the current board with the values we are sure are correct as a reference backup point we might need to come back to
 
   // if 6 fill full row/column with 1 to 6
   // count visible tower in a row/column
-  // if clue is visible tower count plus 1, place the tallest remaining tower the 
+  // if clue is visible tower count plus 1, place the tallest remaining tower the
 
   // if 1 fill 6 in first slot
 
   // clue from either side is grid size plus one e.g. 3 and 4 in a 6x6 grid then we know the placement of the six tower
-  // 
+  //
 
   // would it be better to add all possible values in a cell and gradually remove them as they become invalid options or would it be better to only fill the values in a cell, once we are sure we need to use that specific value
 
@@ -83,13 +111,13 @@ const expected3 = [
 // const clue3 = [0, 3, 0, 5, 3, 4, 0, 0, 0, 0, 0, 1, 0, 3, 0, 3, 2, 3, 3, 2, 0, 3, 1, 0];
 // const expected3 = [
 //         3     5  3  4
-//     [0, 0, 0, 0, 0, 0],  
-//   1 [6, 0, 0, 0, 0, 0],  
-//   3 [0, 0, 0, 0, 0, 0],  
-//     [0, 0, 0, 0, 0, 0],  
-//   2 [0, 0, 0, 6, 0, 0],  
-//   3 [0, 0, 0, 0, 0, 6], 1  
-//      3  2  3     3  
+//     [0, 0, 0, 0, 0, 0],
+//   1 [6, 0, 0, 0, 0, 0],
+//   3 [0, 0, 0, 0, 0, 0],
+//     [0, 0, 0, 0, 0, 0],
+//   2 [0, 0, 0, 6, 0, 0],
+//   3 [0, 0, 0, 0, 0, 6], 1
+//      3  2  3     3
 // ];
 
 // const clue3 = [0, 3, 0, 5, 3, 4, 0, 0, 0, 0, 0, 1, 0, 3, 0, 3, 2, 3, 3, 2, 0, 3, 1, 0];
@@ -103,9 +131,6 @@ const expected3 = [
 //   3 [0, 0, 0, 0, 0, 0], 1
 //      3  2  3  0  3  0
 // ];
-
-
-
 
 // const clue1 = [3, 2, 2, 3, 2, 1, 1, 2, 3, 3, 2, 2, 5, 1, 2, 2, 4, 3, 3, 2, 1, 2, 2, 4];
 // const expected1 = [
@@ -126,8 +151,6 @@ const expected3 = [
 //   [1, 2, 5, 6, 4, 3],
 //   [3, 4, 2, 5, 1, 6],
 // ];
-
-
 
 // console.log(expected1);
 // console.log(solvePuzzle(clue1));
