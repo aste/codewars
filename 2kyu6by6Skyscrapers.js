@@ -2,23 +2,19 @@ function solvePuzzle(clues) {
   // Check grid validity, set grid size, construct and fill grid
   if (clues.length % 4 !== 0) return;
   const gridSize = clues.length / 4;
-  const grid = Array(gridSize)
-    .fill(null)
-    .map(() => Array(gridSize).fill(0));
+  const cellSolutionSpaceRange = Array.from({ length: gridSize }, (_, i) => i + 1);
+
+  const grid = Array.from({ length: gridSize }, () =>
+    Array.from({ length: gridSize }, () => {
+      new Set(cellSolutionSpaceRange);
+    })
+  );
 
   // Map Clues
   const topColumnClues = clues.slice(0, gridSize);
   const bottomColumnClues = clues.slice(gridSize * 2, gridSize * 3).reverse();
   const leftRowClues = clues.slice(gridSize * 3, gridSize * 4).reverse();
   const rightRowClues = clues.slice(gridSize, gridSize * 2);
-
-  // Track Numerical Values Used
-  const usedInRow = Array(gridSize)
-    .fill(null)
-    .map(() => new Set());
-  const usedInColumn = Array(gridSize)
-    .fill(null)
-    .map(() => new Set());
 
   // Deduction value from solution space
   const deductValueFromRow = (row, val) => usedInRow[row].add(val);
@@ -32,7 +28,7 @@ function solvePuzzle(clues) {
   };
 
   // Check for the inversion of the tracked numbers for deduction resulting in a single value
-  const checkForDeductionValues = (row, col) => {
+  const checkDeductionValues = (row, col) => {
     if (grid[row][col] !== 0) return;
 
     let allPotentialValues = Array.from({ length: gridSize }, (_, i) => i + 1);
