@@ -1,46 +1,113 @@
 function solvePuzzle(clues) {
-  // Check grid validity, set grid size, construct and fill grid
+  // Check clue validity, set grid size, construct and fill grid
   if (clues.length % 4 !== 0) return;
   const gridSize = clues.length / 4;
   const cellSolutionSpaceRange = Array.from({ length: gridSize }, (_, i) => i + 1);
-
   const grid = Array.from({ length: gridSize }, () =>
-    Array.from({ length: gridSize }, () => {
-      new Set(cellSolutionSpaceRange);
-    })
+    Array.from({ length: gridSize }, () => new Set(cellSolutionSpaceRange))
   );
 
   // Map Clues
   const topColumnClues = clues.slice(0, gridSize);
+  const rightRowClues = clues.slice(gridSize, gridSize * 2);
   const bottomColumnClues = clues.slice(gridSize * 2, gridSize * 3).reverse();
   const leftRowClues = clues.slice(gridSize * 3, gridSize * 4).reverse();
-  const rightRowClues = clues.slice(gridSize, gridSize * 2);
 
-  // Deduction value from solution space
-  const deductValueFromRow = (row, val) => usedInRow[row].add(val);
-  const deductValueFromCol = (col, val) => usedInColumn[col].add(val);
+  console.log("Clues:");
+  console.log(`All Clues:${clues}`);
+  console.log("");
+  console.log(`top    Column  Clues:    ${topColumnClues}`);
+  console.log(`right  Row     Clues:    ${rightRowClues}`);
+  console.log(`bottom Column  Clues:    ${bottomColumnClues}`);
+  console.log(`left   Row     Clues:    ${leftRowClues}`);
 
-  // Insert cell value
-  const insertCellValue = (row, col, val) => {
-    grid[row][col] = val;
-    deductValueFromRow(row, val);
-    deductValueFromCol(col, val);
-  };
+  console.log("");
+  console.log("Grid:");
+  console.log(grid);
 
-  // Check for the inversion of the tracked numbers for deduction resulting in a single value
-  const checkDeductionValues = (row, col) => {
-    if (grid[row][col] !== 0) return;
+  // Helper Functions
+  const cellIsUnsolved = (row, col) => grid[row][col] instanceof Set;
 
-    let allPotentialValues = Array.from({ length: gridSize }, (_, i) => i + 1);
+  // const deductValueFromRowAndColumn = (1, 4) => {
+  const traverseRowCol = (row, col, normalDirection = true) => {};
 
-    const possibleValues = allPotentialValues.filter(
-      (val) => !usedInRow[row].has(val) && !usedInColumn[col].has(val)
-    );
+  const deductValueFromSolutionSpace = (row, col, val) => {
+    if (grid[row][col] instanceof Set && grid[row][col].has(val) && grid.size > 1) {
+      grid[row][col].delete(val);
 
-    if (possibleValues.length === 1) {
-      insertCellValue(row, col, possibleValues[0]);
+      solveSingleValCell(row, col);
     }
   };
+
+  // Place cell value, remove value from all cells in both row and col direction
+  const solveSingleValCell = (row, col) => {
+    if (grid[row][col] instanceof Set && grid[row][col].size === 1) {
+      const cellValue = grid[row][col].values().next().value;
+      grid[row][col] = cellValue;
+
+      for (let i = 0; i < gridSize; i++) {
+        deductValueFromSolutionSpace(i, col, cellValue);
+        deductValueFromSolutionSpace(row, i, cellValue);
+      }
+    }
+  };
+
+  // Traverse Row
+  // Traverse Column
+
+  // Traverse all clues
+  const traverseClue = () => {
+    for (let index = 0; index < gridSize; index++) {
+      let topClue = topColumnClues[i];
+      if (topClue) {
+        for (let crossIndex = 0; crossIndex < gridSize; crossIndex++) {
+          topClue += 1;
+          deductCellValueFromClue(topClue, index, crossIndex);
+        }
+      }
+      // if (leftRowClues[i]) {
+      // }
+      // // Reverse transverse
+      // if (rightRowClues[i]) {
+      // }
+      // if (bottomColumnClues[i]) {
+      // }
+    }
+  };
+  //    Deduct and place values inwards from clue
+  //      deduct gradually inwards from clue e.g. clue 4 should remove the tallest 3 towers,
+  //      from the 1st cell, the tallest 2 towers from the 2nd cell, the tallest tower from
+  //      the 3rd cell
+  //      if tower with x height is placed here, would it meet the criteria for the clue
+  //      if i can see tallest tower, where should the second tallest be placed to satisfy
+  //      clue condition, see if that deduction is possible
+
+  // Go over all cells
+  //    Place and deduct values
+  //      How many can you see from one side now
+  //      If cell is the only one with value x in either row or col it must be the solution
+  //      If we have x cells with the same x values in a row or col e.g. 3 cells with the same
+  //      3, all 134, we can exclude these 3 values from all other cells in that row or column
+
+  // Place Value in Cell
+  // Remove value from all row and columns
+  // Distance to clue
+
+  // if clue
+  // clue = 1, max
+
+  // Traverse Row & Column
+  // const traverseGrid = (grid) => {
+  //   for (let row = 0; row < gridSize; row++) {
+  //     for (let col = 0; col < gridSize; col++) {
+  //       if (cellIsUnsolved(row, col) {
+
+  //       })
+  //     }
+  //   }}
+  // };
+
+  // Check Row- & Column & Clues
 
   // When all deterministic approaches have been explored, save the board, save the tracked numbers, for potential future backtracking
 
@@ -59,27 +126,31 @@ function solvePuzzle(clues) {
   //   }
   // };
 
-  const fillRow = (clueIndex, reverseDirection) => {
-    for (let i = 0; i < gridSize; i++) {
-      removeCellValue(i, colCoord, value);
-      removeCellValue(rowCoord, i, value);
-    }
-  };
-
   // In case we need to guess save the current board with the values we are sure are correct as a reference backup point we might need to come back to
 
-  // if 6 fill full row/column with 1 to 6
   // count visible tower in a row/column
   // if clue is visible tower count plus 1, place the tallest remaining tower the
+  // if i place x here can it be solved
+  // with the towers currently visible from this clue, and the potential towers in the remaining cells can anything be deducted
+  // count visible towers from this clue
 
   // if 1 fill 6 in first slot
+
+  // Count inwards from clues
+  //    deduct potential values e.g.
+  //      max value (6) in the first position with 2 as a clue
+  //      4, 5, 6 in first, 5, 6, in second, 6 in third with 4 as a clue
+  //    how many towers are visible from this clue now
+  //      which fields are empty, can we deduct any values from this e.g.
+  //      if tower 5 and 6 are visible from a clue 3 field, and the first 3 cells are still free
+  //      we need to place 4 in the cell closest to the clue
+  //      if tower 4 is in the first cell, tower 6 is in the fourth cell, we must exclude tower 5
+  //      from cell 2 and three, if the clue is 2
 
   // clue from either side is grid size plus one e.g. 3 and 4 in a 6x6 grid then we know the placement of the six tower
   //
 
   // would it be better to add all possible values in a cell and gradually remove them as they become invalid options or would it be better to only fill the values in a cell, once we are sure we need to use that specific value
-
-  console.log(grid);
 }
 
 const clue3 = [0, 3, 0, 5, 3, 4, 0, 0, 0, 0, 0, 1, 0, 3, 0, 3, 2, 3, 3, 2, 0, 3, 1, 0];
