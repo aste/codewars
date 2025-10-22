@@ -13,7 +13,6 @@ function solvePuzzle(clues) {
   // Map Clues
   const colStartClue = clues.slice(0, gridSize);
   const colEndClue = clues.slice(gridSize * 2, gridSize * 3).reverse();
-
   const rowStartClue = clues.slice(gridSize * 3, gridSize * 4).reverse();
   const rowEndClue = clues.slice(gridSize, gridSize * 2);
 
@@ -26,12 +25,13 @@ function solvePuzzle(clues) {
   console.log(`Row     End     Clues:    ${rowEndClue}`);
 
   console.log("");
-  console.log("Grid:");
+  console.log("Grid before:");
   console.log(grid);
 
   // Helper Functions
   let numberOfSolvedCells = 0;
-  let maxIterations = numberOfCells * 20; //320 for 6x6
+  let numberOfCellsTraversed = 0;
+  let maxIterations = numberOfCells * 4; //320 for 6x6
   const cellIsUnsolved = (row, col) => grid[row][col] instanceof Set;
 
   const deductValueFromSolutionSpace = (row, col, val) => {
@@ -44,7 +44,6 @@ function solvePuzzle(clues) {
 
   const solveSingleValCell = (row, col) => {
     if (cellIsUnsolved(row, col) && grid[row][col].size === 1) {
-
       const cellValue = grid[row][col].values().next().value;
       grid[row][col] = cellValue;
       numberOfSolvedCells++;
@@ -56,52 +55,92 @@ function solvePuzzle(clues) {
     }
   };
 
-  const deductFromClueDistance = (cell, clue, distanceToClue) => {
+  const deductFromClueDistance = (row, col, clue, distanceToClue) => {
     if (clue === 1 && distanceToClue === 1) {
-      for (const cellValue of cell) {
-        if (cellValue !== 1) cell.delete(cellValue);
+      for (const cellValue of grid[row][col]) {
+        if (cellValue !== gridSize) grid[row][col].delete(cellValue);
       }
     } else {
-
       const limit = gridSize - (clue - distanceToClue);
-      for (const cellValue of cell) {
-        if (cellValue > limit) cell.delete(cellValue);
+      for (const cellValue of grid[row][col]) {
+        if (cellValue > limit) grid[row][col].delete(cellValue);
       }
     }
+    solveSingleValCell(row, col);
   };
 
-  const initialDeductionFromClues = (grid) => {
-    for (let row = 0; row < gridSize; row++) {
-      for (let col = 0; col < gridSize; col++) {
-        // grid[row][col]
+  const initialDistanceDeductionFromClues = (row, col) => {
+    if (colStartClue[col]) deductFromClueDistance(row, col, colStartClue[col], row + 1);
+    if (colEndClue[col]) deductFromClueDistance(row, col, colEndClue[col], gridSize - row);
+    if (rowStartClue[row]) deductFromClueDistance(row, col, rowStartClue[row], col + 1);
+    if (rowEndClue[row]) deductFromClueDistance(row, col, rowEndClue[row], gridSize - col);
+  };
+
+  // If cell is the only one with value x in either row or col it must be the solution
+  const deductFromRowColumnValues = (row, col) => {
+    console.log(`Execute deductFromRowColumnValues on row: ${row}, col: ${col}`);
+    if (cellIsUnsolved(row, col)) {
+      console.log(`cell Is Unsolved: ${cellIsUnsolved(row, col)}`);
+      const cellSet = new Set(grid[row][col]);
+
+      const cumulativeRowValues = new Set();
+      const cumulativeColValues = new Set();
+
+      for (let i = 0; i < gridSize; i++) {
+        if (i !== row) {
+          const otherCell = grid[i][col];
+          if (otherCell instanceof Set) {
+            for (const val of otherCell) cumulativeRowValues.add(val);
+          } else {
+            cumulativeRowValues.add(otherCell);
+          }
+        }
+
+        if (i !== col) {
+          const otherCell = grid[row][i];
+          if (otherCell instanceof Set) {
+            for (const val of otherCell) cumulativeColValues.add(val);
+          } else {
+            cumulativeColValues.add(otherCell);
+          }
+        }
+
+        console.log(`i: ${i}`);
+        console.log(`grid ${[i]}, ${[col]}:`);
+        console.log(grid[i][col]);
+        console.log(`grid ${[row]}, ${[i]}:`);
+        console.log(grid[row][i]);
+        console.log(`cellSet is:`);
+        console.log(cellSet);
       }
+
+      console.log(`cumulativeRowValues is:`);
+      console.log(cumulativeRowValues);
+      console.log(`cumulativeColValues is:`);
+      console.log(cumulativeColValues);
+      const setRowDiff = new Set([...cellSet].filter((val) => !cumulativeRowValues.has(val)));
+      const setColDiff = new Set([...cellSet].filter((val) => !cumulativeColValues.has(val)));
+
+      if (setRowDiff.size === 1) grid[row][col] = new Set([setRowDiff.values().next().value]);
+      if (setColDiff.size === 1) grid[row][col] = new Set([setColDiff.values().next().value]);
+      console.log(`cellSet after:`);
+      console.log(cellSet);
+      console.log("");
     }
   };
 
-  const deductFromClues = (row, col) => {
-    if (colStartClue[col]) deductFromClueDistance(grid[row][col], colStartClue[col], row + 1);
-    if (colEndClue[col]) deductFromClueDistance(grid[row][col], colEndClue[col], gridSize - row);
-    if (rowStartClue[row]) deductFromClueDistance(grid[row][col], rowStartClue[row], col + 1);
-    if (rowEndClue[row]) deductFromClueDistance(grid[row][col], rowEndClue[row], gridSize - col);
-
-    // colStartClue
-    // colEndClue
-    // rowStartClue
-    // rowEndClue
-  };
-
-  const deductFromCellValues = (row, col) => {
-    for (const cellValue of grid[row][col]) {
-    }
-  };
-
-  while (maxIterations > 0 && numberOfSolvedCells < numberOfCells) {
+  // Traverse Grid until solved
+  while (numberOfCellsTraversed < maxIterations && numberOfSolvedCells < numberOfCells) {
     for (let row = 0; row < gridSize; row++) {
       for (let col = 0; col < gridSize; col++) {
-        maxIterations--;
+        numberOfCellsTraversed++;
         if (cellIsUnsolved(row, col)) {
-          deductFromClues(row, col);
-          // deductFromCellValues(row, col);
+          // Only executed on first run
+          if (numberOfCellsTraversed <= numberOfCells) {
+            initialDistanceDeductionFromClues(row, col);
+          }
+
+          deductFromRowColumnValues(row, col);
           solveSingleValCell(row, col);
         } else {
           continue;
@@ -110,49 +149,13 @@ function solvePuzzle(clues) {
     }
   }
 
-  // Calculate deduction values and traverse inwards from clue
-
-  // Traverse Grid
-  //   Check Clue Row
-  //   Check Clue Col
-  //
-
-  // // Traverse all clues
-  // const deductInitialValuesFromClues = () => {
-  //   for (let i = 0; i < gridSize; i++) {
-
-  //     let botClue = colEndClue[i];
-  //       let topClue = colStartClue[i];
-
-  //       let leftClue = rowStartClue[i]
-  //       let rightClue = rowEndClue[i]
-
-  //     }
-
-  //     if (topClue) {
-  //       for (let crossIndex = 0; crossIndex < gridSize; crossIndex++) {
-  //         topClue += 1;
-  //         deductCellValueFromClue(topClue, index, crossIndex);
-  //       }
-  //     }
-  //     // if (rowStartClue[i]) {
-  //     // }
-  //     // // Reverse transverse
-  //     // if (rowEndClue[i]) {
-  //       // if (colEndClue[i]) {
-  //     // }
-  //     // }
-  //   }
-  console.log("Grid:");
+  console.log("-----------------------------");
+  console.log("Grid after:");
   console.log(grid);
+  console.log("-----------------------------");
 }
 
-//    Initial simple Deducttion
-//      Place values inwards from clue
-//      deduct gradually inwards from clue e.g. clue 4 should remove the tallest 3 towers,
-//      from the 1st cell, the tallest 2 towers from the 2nd cell, the tallest tower from
-//      the 3rd cell
-//      1 should insert tallest tower in first cell
+//    Initial simple Deduction
 
 //      More Advanced deduction methods
 //      if tower with x height is placed here, would it meet the criteria for the clue
@@ -161,33 +164,15 @@ function solvePuzzle(clues) {
 
 // Go over all cells
 //    Place and deduct values
-//      How many can you see from one side now
-//      If cell is the only one with value x in either row or col it must be the solution
+//      count visible tower in a row/column
+
 //      If we have x cells with the same x values in a row or col e.g. 3 cells with the same
 //      3, all 134, we can exclude these 3 values from all other cells in that row or column
-
-// Function for measuring Distance to clue
-
-// Check Row- & Column & Clues
-
-// When all deterministic approaches have been explored, save the board, save the tracked numbers, for potential future backtracking
-
-// Remove cell value (might be better to save the 100% deterministic solution and backtrack later, if the guess doesn't lead to any outcome)
-// const removeCellValue = (row, col, val) => {
-//   grid[row][col] = 0;
-//   usedInRow[row].delete(val);
-//   usedInColumn[col].delete(val);
-// };
-
-// In case we need to guess save the current board with the values we are sure are correct as a reference backup point we might need to come back to
-
-// count visible tower in a row/column
+//
 // if clue is visible tower count plus 1, place the tallest remaining tower the
 // if i place x here can it be solved
 // with the towers currently visible from this clue, and the potential towers in the remaining cells can anything be deducted
 // count visible towers from this clue
-
-// if 1 fill 6 in first slot
 
 // Count inwards from clues
 //    deduct potential values e.g.
@@ -202,8 +187,9 @@ function solvePuzzle(clues) {
 
 // clue from either side is grid size plus one e.g. 3 and 4 in a 6x6 grid then we know the placement of the six tower
 //
-
-// would it be better to add all possible values in a cell and gradually remove them as they become invalid options or would it be better to only fill the values in a cell, once we are sure we need to use that specific value
+// (This might not be necessary)
+// When all deterministic approaches have been explored, save the board, save the tracked numbers, for potential future backtracking
+// In case we need to guess save the current board with the values we are sure are correct as a reference backup point we might need to come back to
 
 const clue3 = [0, 3, 0, 5, 3, 4, 0, 0, 0, 0, 0, 1, 0, 3, 0, 3, 2, 3, 3, 2, 0, 3, 1, 0];
 const expected3 = [
