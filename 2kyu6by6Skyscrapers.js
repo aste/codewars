@@ -31,7 +31,7 @@ function solvePuzzle(clues) {
   // Helper Functions
   let numberOfSolvedCells = 0;
   let numberOfCellsTraversed = 0;
-  let maxIterations = numberOfCells * 4; //320 for 6x6
+  let maxIterations = numberOfCells * 8; //320 for 6x6
   const cellIsUnsolved = (row, col) => grid[row][col] instanceof Set;
 
   const deductValueFromSolutionSpace = (row, col, val) => {
@@ -61,9 +61,9 @@ function solvePuzzle(clues) {
         if (cellValue !== gridSize) grid[row][col].delete(cellValue);
       }
     } else {
-      const limit = gridSize - (clue - distanceToClue);
+      const upperLimit = gridSize - (clue - distanceToClue);
       for (const cellValue of grid[row][col]) {
-        if (cellValue > limit) grid[row][col].delete(cellValue);
+        if (cellValue > upperLimit) grid[row][col].delete(cellValue);
       }
     }
     solveSingleValCell(row, col);
@@ -78,9 +78,8 @@ function solvePuzzle(clues) {
 
   // If cell is the only one with value x in either row or col it must be the solution
   const deductFromRowColumnValues = (row, col) => {
-    console.log(`Execute deductFromRowColumnValues on row: ${row}, col: ${col}`);
+    // console.log(`Execute deductFromRowColumnValues on row: ${row}, col: ${col}`);
     if (cellIsUnsolved(row, col)) {
-      console.log(`cell Is Unsolved: ${cellIsUnsolved(row, col)}`);
       const cellSet = new Set(grid[row][col]);
 
       const cumulativeRowValues = new Set();
@@ -104,29 +103,56 @@ function solvePuzzle(clues) {
             cumulativeColValues.add(otherCell);
           }
         }
-
-        console.log(`i: ${i}`);
-        console.log(`grid ${[i]}, ${[col]}:`);
-        console.log(grid[i][col]);
-        console.log(`grid ${[row]}, ${[i]}:`);
-        console.log(grid[row][i]);
-        console.log(`cellSet is:`);
-        console.log(cellSet);
       }
 
-      console.log(`cumulativeRowValues is:`);
-      console.log(cumulativeRowValues);
-      console.log(`cumulativeColValues is:`);
-      console.log(cumulativeColValues);
       const setRowDiff = new Set([...cellSet].filter((val) => !cumulativeRowValues.has(val)));
       const setColDiff = new Set([...cellSet].filter((val) => !cumulativeColValues.has(val)));
 
       if (setRowDiff.size === 1) grid[row][col] = new Set([setRowDiff.values().next().value]);
       if (setColDiff.size === 1) grid[row][col] = new Set([setColDiff.values().next().value]);
-      console.log(`cellSet after:`);
-      console.log(cellSet);
-      console.log("");
     }
+  };
+
+  const countVisibleTowers = (sequence) => {
+    let maxHeight = 0;
+    let towerCount = 0;
+
+    for (const height of sequence) {
+      if (height instanceof Number) {
+        if (height > maxHeight) {
+          towerCount++;
+          maxHeight = height;
+          if (height === gridSize) break;
+        }
+      }
+    }
+
+    return towerCount;
+  };
+
+  const minLargerThan = (set, x) => {
+    const larger = [...set].filter((v) => v > x);
+    return larger.length ? Math.min(...larger) : null;
+  };
+
+  const deductFromClueTower = (row, col) => {
+    //  if clue                                             clue               distance to clue
+    if (colStartClue[col]) deductFromClueDistance(row, col, colStartClue[col], row + 1);
+    if (colEndClue[col]) deductFromClueDistance(row, col, colEndClue[col], gridSize - row);
+    if (rowStartClue[row]) deductFromClueDistance(row, col, rowStartClue[row], col + 1);
+    if (rowEndClue[row]) deductFromClueDistance(row, col, rowEndClue[row], gridSize - col);
+
+    // for each clue in clues:
+    //   for each cell at distance d from that clue:
+    //     for each candidate height h in that cell:
+
+    for (heightCandidate in grid[row][col]) {
+    }
+
+    //         max_visible_if_h_used = 1 + (gridSize - d)  // naive upper bound
+    //         min_visible_if_h_used = min(h, d)           // rough lower bound
+    //         if max_visible_if_h_used < clue or min_visible_if_h_used > clue:
+    //             eliminate h from this cell
   };
 
   // Traverse Grid until solved
@@ -135,10 +161,10 @@ function solvePuzzle(clues) {
       for (let col = 0; col < gridSize; col++) {
         numberOfCellsTraversed++;
         if (cellIsUnsolved(row, col)) {
-          // Only executed on first run
-          if (numberOfCellsTraversed <= numberOfCells) {
-            initialDistanceDeductionFromClues(row, col);
-          }
+          // Only execute on first run
+          if (numberOfCellsTraversed <= numberOfCells) initialDistanceDeductionFromClues(row, col);
+
+          // deductFromClueTower(row, col)
 
           deductFromRowColumnValues(row, col);
           solveSingleValCell(row, col);
@@ -159,25 +185,23 @@ function solvePuzzle(clues) {
 
 //      More Advanced deduction methods
 //      if tower with x height is placed here, would it meet the criteria for the clue
+//      if i look from this clue, how many towers can i see, how tall are they and can i deduct anything form this, see bottom row clue with clue 2 where i can deduct tower 5s placement
 //      if i can see tallest tower, where should the second tallest be placed to satisfy
 //      clue condition, see if that deduction is possible
 
 // Go over all cells
 //    Place and deduct values
-//      count visible tower in a row/column
+//      count visible tower from a clue if one is given for that cell in either of the 4 directions
 
 //      If we have x cells with the same x values in a row or col e.g. 3 cells with the same
 //      3, all 134, we can exclude these 3 values from all other cells in that row or column
-//
+
 // if clue is visible tower count plus 1, place the tallest remaining tower the
 // if i place x here can it be solved
 // with the towers currently visible from this clue, and the potential towers in the remaining cells can anything be deducted
 // count visible towers from this clue
 
 // Count inwards from clues
-//    deduct potential values e.g.
-//      max value (6) in the first position with 2 as a clue
-//      4, 5, 6 in first, 5, 6, in second, 6 in third with 4 as a clue
 //    how many towers are visible from this clue now
 //      which fields are empty, can we deduct any values from this e.g.
 //      if tower 5 and 6 are visible from a clue 3 field, and the first 3 cells are still free
