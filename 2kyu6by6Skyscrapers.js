@@ -32,14 +32,13 @@ function solvePuzzle(clues) {
   let numberOfSolvedCells = 0;
   let numberOfCellsTraversed = 0;
   let maxIterations = numberOfCells * 8;
-  let gridHasChanged = false
+  let gridHasChanged = false;
   const cellIsUnsolved = (row, col) => grid[row][col] instanceof Set;
 
   const deductValueFromSolutionSpace = (row, col, val) => {
+    gridHasChanged = true;
     if (cellIsUnsolved(row, col) && grid[row][col].size > 1 && grid[row][col].has(val)) {
       grid[row][col].delete(val);
-
-      // solveSingleValueCell(row, col);
     }
   };
 
@@ -56,7 +55,7 @@ function solvePuzzle(clues) {
     }
   };
 
-  const deductHighValFromDistToClue = (row, col, clue, distanceToClue) => {
+  const deductValuesFromDistToClue = (row, col, clue, distanceToClue) => {
     if (clue === 1 && distanceToClue === 1) {
       for (const cellValue of grid[row][col]) {
         if (cellValue !== gridSize) grid[row][col].delete(cellValue);
@@ -69,52 +68,25 @@ function solvePuzzle(clues) {
         }
       }
     }
-    // solveSingleValueCell(row, col);
   };
 
   const towerInRow = (row) => grid[row].some((cellValue) => typeof cellValue === "number");
   const towerInCol = (col) => grid.some((row) => typeof row[col] === "number");
-
-  const deductFromClueAndCellValues = (row, col) => {
-    if ((towerInRow(row) && rowStartClue[row]) || rowEndClue[row]) {
-      // make row based deduction in current cell
-      const currentRow = [...grid[row]];
-
-      // lower limit deduction
-      // upper limit deduction
-    }
-    if ((towerInCol(col) && colStartClue[col]) || colEndClue[col]) {
-      // make column based deduction in current cell
-      const currentCol = [];
-      for (let i = 0; i < gridSize; i++) currentCol.push(grid[i][col]);
-      // lower limit deduction
-      // upper limit deduction
-    }
-
-    // solveSingleValueCell(row, col);
-  };
-
+  
   const initialHighValDeductionFromClues = (row, col) => {
-    if (colStartClue[col]) deductHighValFromDistToClue(row, col, colStartClue[col], row + 1);
-    if (colEndClue[col]) deductHighValFromDistToClue(row, col, colEndClue[col], gridSize - row);
-    if (rowStartClue[row]) deductHighValFromDistToClue(row, col, rowStartClue[row], col + 1);
-    if (rowEndClue[row]) deductHighValFromDistToClue(row, col, rowEndClue[row], gridSize - col);
+    if (colStartClue[col]) deductValuesFromDistToClue(row, col, colStartClue[col], row + 1);
+    if (colEndClue[col]) deductValuesFromDistToClue(row, col, colEndClue[col], gridSize - row);
+    if (rowStartClue[row]) deductValuesFromDistToClue(row, col, rowStartClue[row], col + 1);
+    if (rowEndClue[row]) deductValuesFromDistToClue(row, col, rowEndClue[row], gridSize - col);
   };
-
-  // const lowValDeductionFromClues = (row, col) => {
-  //   if (colStartClue[col]) deductFromClueAndCellValues(row, col, colStartClue[col], row + 1);
-  //   // if (colEndClue[col]) deductFromClueAndCellValues(row, col, colEndClue[col], gridSize - row);
-  //   // if (rowStartClue[row]) deductFromClueAndCellValues(row, col, rowStartClue[row], col + 1);
-  //   // if (rowEndClue[row]) deductFromClueAndCellValues(row, col, rowEndClue[row], gridSize - col);
-  // };
-
+  
   const deductFromUniqueness = (row, col) => {
     if (cellIsUnsolved(row, col)) {
       const cellSet = new Set(grid[row][col]);
-
+      
       const cumulativeRowValues = new Set();
       const cumulativeColValues = new Set();
-
+      
       for (let i = 0; i < gridSize; i++) {
         if (i !== row) {
           const otherCell = grid[i][col];
@@ -124,7 +96,7 @@ function solvePuzzle(clues) {
             cumulativeRowValues.add(otherCell);
           }
         }
-
+        
         if (i !== col) {
           const otherCell = grid[row][i];
           if (otherCell instanceof Set) {
@@ -134,10 +106,10 @@ function solvePuzzle(clues) {
           }
         }
       }
-
+      
       const setRowDiff = new Set([...cellSet].filter((val) => !cumulativeRowValues.has(val)));
       const setColDiff = new Set([...cellSet].filter((val) => !cumulativeColValues.has(val)));
-
+      
       if (setRowDiff.size === 1) grid[row][col] = new Set([setRowDiff.values().next().value]);
       if (setColDiff.size === 1) grid[row][col] = new Set([setColDiff.values().next().value]);
     }
@@ -156,70 +128,29 @@ function solvePuzzle(clues) {
         }
       }
     }
-
     return towerCount;
   };
+  
+  const deductFromClueAndCellValues = (row, col) => {
+    if ((towerInRow(row) && rowStartClue[row]) || rowEndClue[row]) {
+      // make row based deduction in current cell
+      const currentRow = [...grid[row]];
 
-  // const minLargerThan = (set, x) => {
-  //   const larger = [...set].filter((v) => v > x);
-  //   return larger.length ? Math.min(...larger) : null;
-  // };
-
-  // Generate all permutations/variations of the sequence from the current cell, if for a single value in a cell there are no valid permutations of the other cells that fulfill the clue values in either direction cull the value
-
-  // function deductFromPermutations(row, col) {
-  //   if (cellIsUnsolved(row, col)) {
-  //     const currentRow = [];
-  //     const currentCol = [];
-
-  //     for (let i = 0; i < gridSize; i++) {
-  //       currentRow.push(grid[i][col]);
-  //       currentCol.push(grid[row][i]);
-  //     }
-
-  //     // if (colStartClue[col]) deductHighValFromDistToClue(row, col, colStartClue[col], row + 1);
-  //     // if (colEndClue[col]) deductHighValFromDistToClue(row, col, colEndClue[col], gridSize - row);
-  //     // if (rowStartClue[row]) deductHighValFromDistToClue(row, col, rowStartClue[row], col + 1);
-  //     // if (rowEndClue[row]) deductHighValFromDistToClue(row, col, rowEndClue[row], gridSize - col);
-  //   }
-  // }
-
-  const minVisibleTowers = (sequence) => {};
-
-  const deductFromCluePermutation = (row, col) => {
-    const currentRow = [...grid[row]];
-    const currentCol = [];
-
-    for (let i = 0; i < gridSize; i++) currentCol.push(grid[i][col]);
-
-    // if clue
-    // make a copy of the rows / columns and flip em in the right sequence
-    // go over all the values in the current cell
-    //  go over all permutations in the other cell, when one value is placed remove them from the
-    //  other cells
-    //   if max_visible_if_h_used < clue or min_visible_if_h_used > clue:
-    //   eliminate h from this cell
-
-    // for each clue in clues:
-    // for each cell at distance d from that clue:
-    //     for each candidate height h in that cell:
-    //         max_visible_if_h_used = 1 + (gridSize - d)  // naive upper bound
-    //         min_visible_if_h_used = min(h, d)           // rough lower bound
-    //         if max_visible_if_h_used < clue or min_visible_if_h_used > clue:
-    //             eliminate h from this cell
+      // lower limit deduction
+      // upper limit deduction
+    }
+    if ((towerInCol(col) && colStartClue[col]) || colEndClue[col]) {
+      // make column based deduction in current cell
+      const currentCol = [];
+      for (let i = 0; i < gridSize; i++) currentCol.push(grid[i][col]);
+      // lower limit deduction
+      // upper limit deduction
+    }
   };
-
-  const deductFromClueTower = (row, col) => {
-    //  if clue                                             clue               distance to clue
-    if (colStartClue[col]) deductHighValFromDistToClue(row, col, colStartClue[col], row + 1);
-    if (colEndClue[col]) deductHighValFromDistToClue(row, col, colEndClue[col], gridSize - row);
-    if (rowStartClue[row]) deductHighValFromDistToClue(row, col, rowStartClue[row], col + 1);
-    if (rowEndClue[row]) deductHighValFromDistToClue(row, col, rowEndClue[row], gridSize - col);
-
-  };
-
+  
   // Traverse Grid until solved
   while (numberOfCellsTraversed < maxIterations && numberOfSolvedCells < numberOfCells) {
+    gridHasChanged = false;
     for (let row = 0; row < gridSize; row++) {
       for (let col = 0; col < gridSize; col++) {
         numberOfCellsTraversed++;
@@ -228,7 +159,7 @@ function solvePuzzle(clues) {
           if (numberOfCellsTraversed <= numberOfCells) initialHighValDeductionFromClues(row, col);
 
           deductFromUniqueness(row, col);
-          if (numberOfCellsTraversed / 2 > numberOfCells) deductFromClueAndCellValues(row, col);
+          if (!gridHasChanged) deductFromClueAndCellValues(row, col);
 
           solveSingleValueCell(row, col);
         } else {
