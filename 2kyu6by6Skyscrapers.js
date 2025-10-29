@@ -16,17 +16,17 @@ function solvePuzzle(clues) {
   const rowStartClue = clues.slice(gridSize * 3, gridSize * 4).reverse();
   const rowEndClue = clues.slice(gridSize, gridSize * 2);
 
-  console.log("Clues:");
-  console.log(`All Clues:${clues}`);
-  console.log("");
-  console.log(`Column  Start   Clues:    ${colStartClue}`);
-  console.log(`Column  End     Clues:    ${colEndClue}`);
-  console.log(`Row     Start   Clues:    ${rowStartClue}`);
-  console.log(`Row     End     Clues:    ${rowEndClue}`);
+  // console.log("Clues:");
+  // console.log(`All Clues:${clues}`);
+  // console.log("");
+  // console.log(`Column  Start   Clues:    ${colStartClue}`);
+  // console.log(`Column  End     Clues:    ${colEndClue}`);
+  // console.log(`Row     Start   Clues:    ${rowStartClue}`);
+  // console.log(`Row     End     Clues:    ${rowEndClue}`);
 
-  console.log("");
-  console.log("Grid before:");
-  console.log(grid);
+  // console.log("");
+  // console.log("Grid before:");
+  // console.log(grid);
 
   // Helper Functions
   let numberOfSolvedCells = 0;
@@ -279,17 +279,17 @@ function solvePuzzle(clues) {
         }
       }
     }
-    console.log("-----------------------------");
-    console.log(`Grid after numberOfCellsTraversed: ${numberOfCellsTraversed}`);
-    console.log(grid);
-    console.log("-----------------------------");
+    // console.log("-----------------------------");
+    // console.log(`Grid after numberOfCellsTraversed: ${numberOfCellsTraversed}`);
+    // console.log(grid);
+    // console.log("-----------------------------");
     if (!gridHasChanged) {
       if (!gridPermutations) {
         gridPermutations = generateRemainingGridPermutations(grid);
-        console.log("------------------- Row Permutations -------------------");
-        console.log(gridPermutations.rowPerms);
-        console.log("------------------- Col Permutations -------------------");
-        console.log(gridPermutations.colPerms);
+        // console.log("------------------- Row Permutations -------------------");
+        // console.log(gridPermutations.rowPerms);
+        // console.log("------------------- Col Permutations -------------------");
+        // console.log(gridPermutations.colPerms);
         gridHasChanged = true;
       } else {
         const changed = crossConsistencyConvergence(grid);
@@ -298,10 +298,10 @@ function solvePuzzle(clues) {
     }
   }
 
-  console.log("-----------------------------");
-  console.log("Grid after:");
-  console.log(grid);
-  console.log("-----------------------------");
+  // console.log("-----------------------------");
+  // console.log("Grid after:");
+  // console.log(grid);
+  // console.log("-----------------------------");
 }
 
 //    Initial simple Deduction
@@ -404,20 +404,20 @@ const expected3 = [
 //   [3, 4, 2, 5, 1, 6],
 // ];
 
-// console.log(expected1);
-// console.log(solvePuzzle(clue1));
+console.log(expected1);
+console.log(solvePuzzle(clue1));
 // solvePuzzle(clue1);
-// console.log("");
-
-// console.log(expected2);
-// console.log(solvePuzzle(clue2));
-// solvePuzzle(clue2);
-// console.log("");
-
-// console.log(expected3);
-// console.log(solvePuzzle(clue3));
-solvePuzzle(clue3);
 console.log("");
+
+console.log(expected2);
+console.log(solvePuzzle(clue2));
+// solvePuzzle(clue2);
+console.log("");
+
+console.log(expected3);
+console.log(solvePuzzle(clue3));
+solvePuzzle(clue3);
+// console.log("");
 
 // Description:
 // In a grid of 6 by 6 squares you want to place a skyscraper in each square with only some clues:
