@@ -31,7 +31,7 @@ function solvePuzzle(clues) {
   // Helper Functions
   let numberOfSolvedCells = 0;
   let numberOfCellsTraversed = 0;
-  let maxIterations = numberOfCells * 8;
+  let maxIterations = numberOfCells * 20;
   let gridHasChanged = false;
   const cellIsUnsolved = (row, col) => grid[row][col] instanceof Set;
 
@@ -76,14 +76,6 @@ function solvePuzzle(clues) {
       }
     }
   };
-
-  const towerInRow = (row) => grid[row].some((cellValue) => typeof cellValue === "number");
-  const usefulClueInRowStart = (row) => rowStartClue[row] && rowStartClue[row] !== 1;
-  const usefulClueInRowEnd = (row) => rowEndClue[row] && rowEndClue[row] !== 1;
-
-  const towerInCol = (col) => grid.some((row) => typeof row[col] === "number");
-  const usefulClueInColStart = (col) => colStartClue[col] && colStartClue[col] !== 1;
-  const usefulClueInColEnd = (col) => colEndClue[col] && colEndClue[col] !== 1;
 
   const initialValueDeductionFromClues = (row, col) => {
     if (colStartClue[col]) deductValuesFromDistToClue(row, col, colStartClue[col], row + 1);
@@ -140,25 +132,43 @@ function solvePuzzle(clues) {
     return visibleTowers;
   };
 
-  const deductFromClueAndCellValues = (row, col) => {
-    if (towerInRow(row) && (usefulClueInRowStart(row) || usefulClueInRowEnd(row))) {
-      const currentRow = [...grid[row]];
+  function deductCandidateFromPermutations(grid, gridPermutations) {
+    const { rowPerms, colPerms } = gridPermutations;
 
-      // make row based permutations for all cell combination to deduct values in current cell
+    for (let row = 0; row < gridSize; row++) {
+      for (let col = 0; col < gridSize; col++) {
+        if (typeof grid[row][col] === "number") continue;
 
-      // if usefulClueInRowStart
-      // take the currentRow remove the values in the array after the value equal to gridSize, since no towers will be seen behind it
-      // calculate all the permutations, when one value is chosen remove that value as an option in the other cells
-      // run the countVisibleTowers on the permutations sequence if all permutations for a given value are either under or over the clue value, when counting towers, remove that value for the cell
+        const rowAllowed = new Set(rowPerms[row].map((p) => p[col]));
+        const colAllowed = new Set(colPerms[col].map((p) => p[row]));
+        const intersection = [...grid[row][col]].filter(
+          (v) => rowAllowed.has(v) && colAllowed.has(v)
+        );
 
-      // if usefulClueInRowEnd do the same but reverse the currentRow list before passing it in
-      // include gridHasChanged = true; when applicable
+        if (intersection.length < grid[row][col].size) {
+          grid[row][col] = new Set(intersection);
+          gridHasChanged = true;
+        }
+      }
     }
-    if (towerInCol(col) && (usefulClueInColStart(col) || usefulClueInColEnd(col))) {
-      const currentCol = [];
-      for (let i = 0; i < gridSize; i++) currentCol.push(grid[i][col]);
+  }
 
-      // same as above, but with Columns
+  const crossConsistencyConvergence = (grid) => {
+    let changed = true;
+    let rowPerms = [],
+      colPerms = [];
+
+    while (changed) {
+      changed = false;
+      const newPerms = generateRemainingGridPermutations(grid);
+      rowPerms = newPerms.rowPerms;
+      colPerms = newPerms.colPerms;
+
+      const before = JSON.stringify(grid);
+      deductCandidateFromPermutations(grid, { rowPerms, colPerms });
+      const after = JSON.stringify(grid);
+
+      if (before !== after) changed = true;
     }
   };
 
@@ -167,7 +177,9 @@ function solvePuzzle(clues) {
     const colPerms = [];
 
     for (let row = 0; row < gridSize; row++) {
-      const candidateList = grid[r].map((cell) => (typeof cell === "number" ? [cell] : [...cell]));
+      const candidateList = grid[row].map((cell) =>
+        typeof cell === "number" ? [cell] : [...cell]
+      );
 
       const perms = generatePermutationsFromCandidates(
         candidateList,
@@ -260,7 +272,6 @@ function solvePuzzle(clues) {
 
           if (!gridHasChanged && gridPermutations) {
             // start deducting and pruning the permutations
-            deductFromClueAndCellValues(row, col);
             solveSingleValueCell(row, col);
           }
         } else {
@@ -268,12 +279,21 @@ function solvePuzzle(clues) {
         }
       }
     }
+    console.log("-----------------------------");
+    console.log(`Grid after numberOfCellsTraversed: ${numberOfCellsTraversed}`);
+    console.log(grid);
+    console.log("-----------------------------");
     if (!gridHasChanged) {
       if (!gridPermutations) {
         gridPermutations = generateRemainingGridPermutations(grid);
+        console.log("------------------- Row Permutations -------------------");
+        console.log(gridPermutations.rowPerms);
+        console.log("------------------- Col Permutations -------------------");
+        console.log(gridPermutations.colPerms);
         gridHasChanged = true;
       } else {
-        // pruneGridUsingPermutations(gridPermutations, grid);
+        const changed = crossConsistencyConvergence(grid);
+        gridHasChanged ||= changed;
       }
     }
   }
