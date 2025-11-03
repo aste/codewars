@@ -1,19 +1,27 @@
 function solvePuzzle(clues) {
-  console.log(clues);
   const context = initializeContext(clues);
-  const { grid, gridSize, gridIsSolved } = context;
+  const { grid, gridSize, gridIsSolved, gridPermutations } = context;
+  // console.log("-------------- Initialized Grid Values ----------------");
+  // console.log(`Clues are:`);
+  // console.log(clues);
+  // console.log(``);
+  // console.log(`gridSize is:`);
+  // console.log(gridSize);
+
+  // console.log("-------------- Initialized Grid Values  ----------------");
+  // console.log(grid);
 
   const PHASES = [
     PhaseClueDeduction,
     PhaseUniqueness,
     PhaseSingleValue,
     PhasePermutationConvergence,
-    PhasePermutationForcing,
-    PhaseSingleValue,
+    // PhasePermutationForcing,
+    // PhaseSingleValue,
   ];
 
   let iterations = 0;
-  const maxIterations = gridSize ** 2 * 40;
+  const maxIterations = gridSize ** 2 * 100;
 
   while (iterations < maxIterations && !gridIsSolved(grid)) {
     let changedThisSweep = false;
@@ -27,6 +35,43 @@ function solvePuzzle(clues) {
     if (!changedThisSweep) break;
     iterations++;
   }
+
+  console.log(
+    "---------------- FINAL gridPermutations before terminating the solver --------------------"
+  );
+
+  if (context.gridPermutations) {
+    const { rowPerms, colPerms } = context.gridPermutations;
+
+    console.log("---- FINAL ROW PERMUTATIONS ----");
+    rowPerms.forEach((perms, rowIndex) => {
+      console.log(
+        `Row ${rowIndex}: (${perms.length} perms)`,
+        perms.map((p) => JSON.stringify(p))
+      );
+    });
+
+    console.log("---- FINAL COLUMN PERMUTATIONS ----");
+    colPerms.forEach((perms, colIndex) => {
+      console.log(
+        `Col ${colIndex}: (${perms.length} perms)`,
+        perms.map((p) => JSON.stringify(p))
+      );
+    });
+    console.log(
+      "Row Perm Counts:",
+      rowPerms.map((p) => p.length)
+    );
+    console.log(
+      "Col Perm Counts:",
+      colPerms.map((p) => p.length)
+    );
+  } else {
+    console.log("gridPermutations is still null (Permutation phase never ran?)");
+  }
+  console.log(
+    "---------------- FINAL gridPermutations before terminating the solver --------------------"
+  );
 
   return grid;
 }
@@ -84,13 +129,14 @@ function PhaseClueDeduction(grid, context) {
         }
       }
     } else {
-      const upperLimit = gridSize - (clue - distanceToClue);
-      if (cellIsUnsolved(grid, row, col)) {
-        for (const cellValue of grid[row][col]) {
-          if (cellValue > upperLimit) {
-            grid[row][col].delete(cellValue);
-            changed = true;
-          }
+      const upperCellLimit = gridSize - (clue - distanceToClue);
+
+      if (!cellIsUnsolved(grid, row, col)) return;
+
+      for (const cellValue of [...grid[row][col]]) {
+        if (cellValue > upperCellLimit) {
+          grid[row][col].delete(cellValue);
+          changed = true;
         }
       }
     }
@@ -271,90 +317,6 @@ function generateRemainingGridPermutations(grid, context) {
   return { rowPerms, colPerms };
 }
 
-function PhasePermutationForcing(grid, context) {
-  const { gridSize, gridIsSolved } = context;
-  let changed = false;
-
-  const { rowPerms, colPerms } =
-    context.gridPermutations ?? generateRemainingGridPermutations(grid, context);
-
-  for (let r = 0; r < gridSize; r++) {
-    for (let c = 0; c < gridSize; c++) {
-      if (typeof grid[r][c] === "number") continue;
-
-      const rowAgree = agreeAtPosition(rowPerms[r], c);
-
-      const colAgree = agreeAtPosition(colPerms[c], r);
-
-      const forced =
-        rowAgree != null && colAgree != null
-          ? rowAgree === colAgree
-            ? rowAgree
-            : null
-          : rowAgree ?? colAgree;
-
-      if (forced != null) {
-        if (!(grid[r][c].size === 1 && grid[r][c].has(forced))) {
-          grid[r][c] = new Set([forced]);
-          changed = true;
-        }
-      }
-    }
-  }
-
-  for (let r = 0; r < gridSize; r++) {
-    const placesForVal = positionsByValue(rowPerms[r], gridSize);
-    for (const [v, cols] of placesForVal) {
-      if (cols.size === 1) {
-        const c = cols.values().next().value;
-        if (typeof grid[r][c] !== "number" || grid[r][c] !== v) {
-          grid[r][c] = new Set([v]);
-          changed = true;
-        }
-      }
-    }
-  }
-
-  for (let c = 0; c < gridSize; c++) {
-    const placesForVal = positionsByValue(colPerms[c], gridSize);
-    for (const [v, rows] of placesForVal) {
-      if (rows.size === 1) {
-        const r = rows.values().next().value;
-        if (typeof grid[r][c] !== "number" || grid[r][c] !== v) {
-          grid[r][c] = new Set([v]);
-          changed = true;
-        }
-      }
-    }
-  }
-
-  function agreeAtPosition(perms, idx) {
-    if (!perms || perms.length === 0) return null;
-    let v = perms[0][idx];
-    for (let i = 1; i < perms.length; i++) if (perms[i][idx] !== v) return null;
-    return v;
-  }
-
-  function positionsByValue(perms, size) {
-    const map = new Map(); // v -> Set(pos)
-    if (!perms) return map;
-    for (let pos = 0; pos < size; pos++) {
-      const seen = new Map(); // value -> count at this pos (avoid duplicates within same perm set)
-      for (const p of perms) {
-        const v = p[pos];
-        if (!seen.has(v)) {
-          seen.set(v, 1);
-          if (!map.has(v)) map.set(v, new Set());
-          map.get(v).add(pos);
-        }
-      }
-    }
-    return map;
-  }
-
-  return { changed, solved: gridIsSolved(grid) };
-}
-
 function generatePermutationsFromCandidates(
   candidateList,
   startClue = false,
@@ -412,9 +374,20 @@ const sevenBySevenMedVedResult = [
   [3, 5, 1, 4, 7, 2, 6],
 ];
 
+console.log("sevenBySevenMedVedClue");
 console.log(sevenBySevenMedVedClue);
-console.log(solvePuzzle(sevenBySevenMedVedResult));
-
+console.log("Solver Solution for sevenBySevenMedVedClue");
+console.log(solvePuzzle(sevenBySevenMedVedClue));
+console.log("The Correct Testcase Solution:");
+console.log([
+  [2, 1, 4, 7, 6, 5, 3],
+  [6, 4, 7, 3, 5, 1, 2],
+  [1, 2, 3, 6, 4, 7, 5],
+  [5, 7, 6, 2, 3, 4, 1],
+  [4, 3, 5, 1, 2, 6, 7],
+  [7, 6, 2, 5, 1, 3, 4],
+  [3, 5, 1, 4, 7, 2, 6],
+]);
 
 const theOutputFromMySolver = [
   [
