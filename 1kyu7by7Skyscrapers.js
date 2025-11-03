@@ -1,77 +1,14 @@
+// Puzzle Solver & Context Generation
 function solvePuzzle(clues) {
   const context = initializeContext(clues);
-  const { grid, gridSize, gridIsSolved, gridPermutations } = context;
-  // console.log("-------------- Initialized Grid Values ----------------");
-  // console.log(`Clues are:`);
-  // console.log(clues);
-  // console.log(``);
-  // console.log(`gridSize is:`);
-  // console.log(gridSize);
+  const { grid, gridSize, gridIsSolved } = context;
 
-  // console.log("-------------- Initialized Grid Values  ----------------");
-  // console.log(grid);
+  runDeterministicPhases(grid, context);
 
-  const PHASES = [
-    PhaseClueDeduction,
-    PhaseUniqueness,
-    PhaseSingleValue,
-    PhasePermutationConvergence,
-    // PhasePermutationForcing,
-    // PhaseSingleValue,
-  ];
-
-  let iterations = 0;
-  const maxIterations = gridSize ** 2 * 100;
-
-  while (iterations < maxIterations && !gridIsSolved(grid)) {
-    let changedThisSweep = false;
-
-    for (const phase of PHASES) {
-      const { changed, solved } = phase(grid, context);
-      if (solved) return grid;
-      if (changed) changedThisSweep = true;
-    }
-
-    if (!changedThisSweep) break;
-    iterations++;
+  if (!gridIsSolved(grid)) {
+    const searchResult = permutationSearch(grid, context);
+    if (searchResult) return searchResult;
   }
-
-  console.log(
-    "---------------- FINAL gridPermutations before terminating the solver --------------------"
-  );
-
-  if (context.gridPermutations) {
-    const { rowPerms, colPerms } = context.gridPermutations;
-
-    console.log("---- FINAL ROW PERMUTATIONS ----");
-    rowPerms.forEach((perms, rowIndex) => {
-      console.log(
-        `Row ${rowIndex}: (${perms.length} perms)`,
-        perms.map((p) => JSON.stringify(p))
-      );
-    });
-
-    console.log("---- FINAL COLUMN PERMUTATIONS ----");
-    colPerms.forEach((perms, colIndex) => {
-      console.log(
-        `Col ${colIndex}: (${perms.length} perms)`,
-        perms.map((p) => JSON.stringify(p))
-      );
-    });
-    console.log(
-      "Row Perm Counts:",
-      rowPerms.map((p) => p.length)
-    );
-    console.log(
-      "Col Perm Counts:",
-      colPerms.map((p) => p.length)
-    );
-  } else {
-    console.log("gridPermutations is still null (Permutation phase never ran?)");
-  }
-  console.log(
-    "---------------- FINAL gridPermutations before terminating the solver --------------------"
-  );
 
   return grid;
 }
@@ -86,6 +23,7 @@ function initializeContext(clues) {
     grid,
     gridSize,
     numberOfCells: gridSize ** 2,
+    maxDeterministicIterations: 20,
     clues: {
       colStart: clues.slice(0, gridSize),
       colEnd: clues.slice(gridSize * 2, gridSize * 3).reverse(),
@@ -115,7 +53,36 @@ function initializeContext(clues) {
   return context;
 }
 
-// Solver Phases
+// Deterministic Deduction Phases
+const DETERMINISTIC_DEDUCTION_PHASES = [
+  PhaseClueDeduction,
+  PhaseUniqueness,
+  PhaseSingleValue,
+  PhasePermutationConvergence,
+];
+
+function runDeterministicPhases(grid, context) {
+  const { gridSize, gridIsSolved } = context;
+  let iterations = 0;
+  const maxIterations = gridSize ** 2 * context.maxDeterministicIterations;
+
+  while (iterations < maxIterations && !gridIsSolved(grid)) {
+    let changedThisSweep = false;
+
+    for (const phase of DETERMINISTIC_DEDUCTION_PHASES) {
+      const { changed, solved } = phase(grid, context);
+      if (solved) return true;
+      if (changed) changedThisSweep = true;
+    }
+
+    if (!changedThisSweep) break;
+    iterations++;
+  }
+
+  return gridIsSolved(grid);
+}
+
+// Use edge clues to eliminate impossible values based on distance from the clue
 function PhaseClueDeduction(grid, context) {
   const { gridSize, clues, gridIsSolved, cellIsUnsolved } = context;
   let changed = false;
@@ -156,6 +123,7 @@ function PhaseClueDeduction(grid, context) {
   return { changed, solved: gridIsSolved(grid) };
 }
 
+// Place values that appear only once in a row or column into their cell
 function PhaseUniqueness(grid, context) {
   const { gridSize, gridIsSolved, cellIsUnsolved } = context;
   let changed = false;
@@ -167,8 +135,8 @@ function PhaseUniqueness(grid, context) {
       const cellSet = grid[row][col];
       const sizeBefore = cellSet.size;
 
-      const cumulativeColValues = new Set(); // values in same column (other rows)
-      const cumulativeRowValues = new Set(); // values in same row (other cols)
+      const cumulativeColValues = new Set();
+      const cumulativeRowValues = new Set();
 
       for (let i = 0; i < gridSize; i++) {
         if (i !== row) {
@@ -204,6 +172,7 @@ function PhaseUniqueness(grid, context) {
   return { changed, solved: gridIsSolved(grid) };
 }
 
+// Collapse single-value cells and remove their value from the their row and column
 function PhaseSingleValue(grid, context) {
   const { gridSize, gridIsSolved, cellIsUnsolved } = context;
   let changed = false;
@@ -233,30 +202,7 @@ function PhaseSingleValue(grid, context) {
   return { changed, solved: gridIsSolved(grid) };
 }
 
-function deductCandidateFromPermutations(grid, gridPermutations, gridSize) {
-  const { rowPerms, colPerms } = gridPermutations;
-  let changed = false;
-
-  for (let row = 0; row < gridSize; row++) {
-    for (let col = 0; col < gridSize; col++) {
-      if (typeof grid[row][col] === "number") continue;
-
-      const rowAllowed = new Set(rowPerms[row].map((p) => p[col]));
-      const colAllowed = new Set(colPerms[col].map((p) => p[row]));
-      const intersection = [...grid[row][col]].filter(
-        (v) => rowAllowed.has(v) && colAllowed.has(v)
-      );
-
-      if (intersection.length < grid[row][col].size) {
-        grid[row][col] = new Set(intersection);
-        changed = true;
-      }
-    }
-  }
-
-  return changed;
-}
-
+// Generate all valid row/column permutations and remove candidates that never appear
 function PhasePermutationConvergence(grid, context) {
   const { gridSize, gridIsSolved } = context;
   let changedOverall = false;
@@ -281,6 +227,30 @@ function PhasePermutationConvergence(grid, context) {
   }
 
   return { changed: changedOverall, solved: gridIsSolved(grid) };
+}
+
+function deductCandidateFromPermutations(grid, gridPermutations, gridSize) {
+  const { rowPerms, colPerms } = gridPermutations;
+  let changed = false;
+
+  for (let row = 0; row < gridSize; row++) {
+    for (let col = 0; col < gridSize; col++) {
+      if (typeof grid[row][col] === "number") continue;
+
+      const rowAllowed = new Set(rowPerms[row].map((p) => p[col]));
+      const colAllowed = new Set(colPerms[col].map((p) => p[row]));
+      const intersection = [...grid[row][col]].filter(
+        (v) => rowAllowed.has(v) && colAllowed.has(v)
+      );
+
+      if (intersection.length < grid[row][col].size) {
+        grid[row][col] = new Set(intersection);
+        changed = true;
+      }
+    }
+  }
+
+  return changed;
 }
 
 function generateRemainingGridPermutations(grid, context) {
@@ -359,6 +329,115 @@ function generatePermutationsFromCandidates(
 
   backtrack();
   return result;
+}
+
+// Backtracking Search
+// Try permutations of the most constrained row/column, re-run deductions, backtrack if needed.
+function deepCloneGrid(grid) {
+  return grid.map((row) => row.map((cell) => (cell instanceof Set ? new Set(cell) : cell)));
+}
+
+function permutationSearch(grid, context) {
+  const { gridSize, gridIsSolved } = context;
+
+  const { rowPerms, colPerms } = generateRemainingGridPermutations(grid, context);
+  context.gridPermutations = { rowPerms, colPerms };
+
+  // Choose the most constrained row/col with fewest permutations
+  let bestIsRow = null;
+  let bestIndex = -1;
+  let bestCount = Infinity;
+
+  for (let r = 0; r < gridSize; r++) {
+    const len = rowPerms[r].length;
+    if (len > 1 && len < bestCount) {
+      bestCount = len;
+      bestIsRow = true;
+      bestIndex = r;
+    }
+  }
+
+  for (let c = 0; c < gridSize; c++) {
+    const len = colPerms[c].length;
+    if (len > 1 && len < bestCount) {
+      bestCount = len;
+      bestIsRow = false;
+      bestIndex = c;
+    }
+  }
+
+  // Try all permutations for the chosen row/column
+  if (bestIsRow) {
+    const r = bestIndex;
+    for (const perm of rowPerms[r]) {
+      const newGrid = deepCloneGrid(grid);
+      let consistent = true;
+
+      for (let c = 0; c < gridSize; c++) {
+        const val = perm[c];
+        const cell = newGrid[r][c];
+
+        if (typeof cell === "number") {
+          if (cell !== val) {
+            consistent = false;
+            break;
+          }
+        } else {
+          if (!cell.has(val)) {
+            consistent = false;
+            break;
+          }
+          newGrid[r][c] = val;
+        }
+      }
+
+      if (!consistent) continue;
+
+      const solvedByDeductions = runDeterministicPhases(newGrid, context);
+      if (solvedByDeductions) {
+        return newGrid;
+      }
+
+      const result = permutationSearch(newGrid, context);
+      if (result) return result;
+    }
+  } else {
+    const c = bestIndex;
+    for (const perm of colPerms[c]) {
+      const newGrid = deepCloneGrid(grid);
+      let consistent = true;
+
+      for (let r = 0; r < gridSize; r++) {
+        const val = perm[r];
+        const cell = newGrid[r][c];
+
+        if (typeof cell === "number") {
+          if (cell !== val) {
+            consistent = false;
+            break;
+          }
+        } else {
+          if (!cell.has(val)) {
+            consistent = false;
+            break;
+          }
+          newGrid[r][c] = val;
+        }
+      }
+
+      if (!consistent) continue;
+
+      const solvedByDeductions = runDeterministicPhases(newGrid, context);
+      if (solvedByDeductions) {
+        return newGrid;
+      }
+
+      const result = permutationSearch(newGrid, context);
+      if (result) return result;
+    }
+  }
+
+  return null;
 }
 
 const sevenBySevenMedVedClue = [
