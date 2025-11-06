@@ -1,14 +1,13 @@
 function assemblerInterpreter(program) {
+  preprocess(program);
   // Preprocess
   //    remove comments and empty lines
   //    Identify and map labels, to line numbers for jumps and calls
   //    tokenize each instruction into a command + argument
-
   // Interpret
   //    Initialize registers, output buffer, call stack, etc.
   //    Traverse the program line by line, using an instruction pointer (like ip)
   //    At each line, dispatch the instruction to a helper function
-  
   // Instruction Handlers
   // mov x, y	Store a value (y) into register x. y could be a number or another register.
   // inc x, dec x	Increase or decrease a register’s value by 1.
@@ -20,6 +19,21 @@ function assemblerInterpreter(program) {
   // msg	Store output made of text and register values.
   // end	Stop the program and return the output string.
   // ;	This is a comment, so skip that line or ignore anything after ;.
+}
+
+function preprocess(program) {
+  const codeLineByLine = program.split("\n");
+
+  for (let i = 0; i < codeLineByLine.length; i++) {
+    codeLineByLine[i] = codeLineByLine[i].trim();
+    if (codeLineByLine[i] === "") codeLineByLine.splice(i, 1);
+
+    if (codeLineByLine[i].includes(";")) {
+      codeLineByLine[i] = codeLineByLine[i].split(";")[0].trim();
+    }
+
+    console.log(codeLineByLine[i]);
+  }
 }
 
 //Testcases
