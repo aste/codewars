@@ -23,17 +23,22 @@ function assemblerInterpreter(program) {
 
 function preprocess(program) {
   const codeLineByLine = program.split("\n");
+  const cleanedLines = [];
 
   for (let i = 0; i < codeLineByLine.length; i++) {
     codeLineByLine[i] = codeLineByLine[i].trim();
-    if (codeLineByLine[i] === "") codeLineByLine.splice(i, 1);
+    if (codeLineByLine[i] === "") continue;
 
     if (codeLineByLine[i].includes(";")) {
       codeLineByLine[i] = codeLineByLine[i].split(";")[0].trim();
     }
 
-    console.log(codeLineByLine[i]);
+    cleanedLines.push(codeLineByLine[i]);
   }
+
+  console.log(cleanedLines);
+
+  return cleanedLines;
 }
 
 //Testcases
