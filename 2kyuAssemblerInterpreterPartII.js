@@ -1,7 +1,6 @@
 function assemblerInterpreter(program) {
   preprocess(program);
   // Preprocess
-  //    remove comments and empty lines
   //    Identify and map labels, to line numbers for jumps and calls
   //    tokenize each instruction into a command + argument
   // Interpret
@@ -18,7 +17,6 @@ function assemblerInterpreter(program) {
   // call, ret	Call a subroutine and return back afterward. Like a mini function.
   // msg	Store output made of text and register values.
   // end	Stop the program and return the output string.
-  // ;	This is a comment, so skip that line or ignore anything after ;.
 }
 
 function preprocess(program) {
@@ -33,7 +31,7 @@ function preprocess(program) {
       codeLineByLine[i] = codeLineByLine[i].split(";")[0].trim();
     }
 
-    cleanedLines.push(codeLineByLine[i]);
+    if (line !== "") cleanedLines.push(codeLineByLine[i]);
   }
 
   console.log(cleanedLines);
