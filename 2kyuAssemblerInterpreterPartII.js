@@ -1,7 +1,9 @@
 function assemblerInterpreter(program) {
   preprocess(program);
+
   // Preprocess
   //    Identify and map labels, to line numbers for jumps and calls
+
   //    tokenize each instruction into a command + argument
   // Interpret
   //    Initialize registers, output buffer, call stack, etc.
@@ -22,6 +24,8 @@ function assemblerInterpreter(program) {
 function preprocess(program) {
   const codeLineByLine = program.split("\n");
   const cleanedLines = [];
+  const tokenizedInstructions = [];
+  const fnLabels = {};
 
   for (let i = 0; i < codeLineByLine.length; i++) {
     codeLineByLine[i] = codeLineByLine[i].trim();
@@ -31,7 +35,39 @@ function preprocess(program) {
       codeLineByLine[i] = codeLineByLine[i].split(";")[0].trim();
     }
 
+    if (codeLineByLine[i].includes(":")) {
+      let fnLabels = codeLineByLine[i].split(":")[0].trim();
+      fnLabels[fnName] = i;
+    }
+
     if (line !== "") cleanedLines.push(codeLineByLine[i]);
+  }
+
+  for (let i = 0; i < cleanedLines.length; i++) {
+    let tokenizedLine = [];
+    let currentToken = [];
+
+    let lineToProcess = cleanedLines[i].split("");
+    let apostropheStringProcessing = false;
+    let quotationStringProcessing = false;
+
+    for (let symbolIndex = 0; symbolIndex < lineToProcess.length; symbolIndex++) {
+      if (lineToProcess[symbolIndex] === "'") {
+        apostropheStringProcessing = !apostropheStringProcessing;
+      }
+      if (lineToProcess[symbolIndex] === '"') {
+        quotationStringProcessing = !quotationStringProcessing;
+      }
+
+      if (!apostropheStringProcessing && !quotationStringProcessing) {
+        
+        // check for spaces and other symbols that would break the line and start a new element in the array
+      } else {
+        // if still in string append all elements until the end of the string and then break and start a new element as the next element in the array
+      }
+    }
+
+    tokenizedInstructions[i] = tokenizedLine;
   }
 
   console.log(cleanedLines);
