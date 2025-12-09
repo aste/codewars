@@ -3,12 +3,13 @@ function assemblerInterpreter(program) {
 
   // Preprocess
   //    Identify and map labels, to line numbers for jumps and calls
+  //    tokenize each instruction into a command + argument(s)
 
-  //    tokenize each instruction into a command + argument
   // Interpret
   //    Initialize registers, output buffer, call stack, etc.
   //    Traverse the program line by line, using an instruction pointer (like ip)
   //    At each line, dispatch the instruction to a helper function
+
   // Instruction Handlers
   // mov x, y	Store a value (y) into register x. y could be a number or another register.
   // inc x, dec x	Increase or decrease a register’s value by 1.
@@ -36,43 +37,86 @@ function preprocess(program) {
     }
 
     if (codeLineByLine[i].includes(":")) {
-      let fnLabels = codeLineByLine[i].split(":")[0].trim();
-      fnLabels[fnName] = i;
+      let fnLabel = codeLineByLine[i].split(":")[0].trim();
+      fnLabels[fnLabel] = cleanedLines.length + 1;
     }
 
-    if (line !== "") cleanedLines.push(codeLineByLine[i]);
+    if (codeLineByLine[i] !== "") cleanedLines.push(codeLineByLine[i]);
   }
 
-  for (let i = 0; i < cleanedLines.length; i++) {
-    let tokenizedLine = [];
-    let currentToken = [];
+  console.log("fnLabels");
+  console.log(fnLabels);
+  console.log("cleanedLines");
+  console.log(cleanedLines);
 
+  for (let i = 0; i < cleanedLines.length; i++) {
     let lineToProcess = cleanedLines[i].split("");
     let apostropheStringProcessing = false;
     let quotationStringProcessing = false;
+    let tokensForLine = [];
+    let currentToken = [];
 
     for (let symbolIndex = 0; symbolIndex < lineToProcess.length; symbolIndex++) {
-      if (lineToProcess[symbolIndex] === "'") {
+      if (lineToProcess[symbolIndex] === "'" && !quotationStringProcessing) {
+        currentToken.push("'");
         apostropheStringProcessing = !apostropheStringProcessing;
+        if (!apostropheStringProcessing) {
+          tokensForLine.push(currentToken.join(""));
+          currentToken = [];
+        }
+        continue;
       }
-      if (lineToProcess[symbolIndex] === '"') {
+
+      if (lineToProcess[symbolIndex] === '"' && !apostropheStringProcessing) {
+        currentToken.push('"');
         quotationStringProcessing = !quotationStringProcessing;
+        if (!quotationStringProcessing) {
+          tokensForLine.push(currentToken.join(""));
+          currentToken = [];
+        }
+        continue;
+      }
+
+      if (apostropheStringProcessing || quotationStringProcessing) {
+        if (
+          (apostropheStringProcessing && lineToProcess[symbolIndex] !== "'") ||
+          (quotationStringProcessing && lineToProcess[symbolIndex] !== '"')
+        ) {
+          currentToken.push(lineToProcess[symbolIndex]);
+          continue;
+        } else {
+          tokensForLine.push(currentToken.join(""));
+          currentToken = [];
+          apostropheStringProcessing = false;
+          quotationStringProcessing = false;
+          continue;
+        }
       }
 
       if (!apostropheStringProcessing && !quotationStringProcessing) {
-        
-        // check for spaces and other symbols that would break the line and start a new element in the array
-      } else {
-        // if still in string append all elements until the end of the string and then break and start a new element as the next element in the array
+        if (lineToProcess[symbolIndex] === " " || lineToProcess[symbolIndex] === ",") {
+          if (currentToken.length !== 0) {
+            tokensForLine.push(currentToken.join(""));
+            currentToken = [];
+          }
+        } else {
+          currentToken.push(lineToProcess[symbolIndex]);
+        }
       }
     }
+    if (currentToken.length !== 0) {
+      tokensForLine.push(currentToken.join(""));
+    }
 
-    tokenizedInstructions[i] = tokenizedLine;
+    tokenizedInstructions.push(tokensForLine);
   }
 
+  console.log("cleanedLines");
   console.log(cleanedLines);
+  console.log("tokenizedInstructions");
+  console.log(tokenizedInstructions);
 
-  return cleanedLines;
+  return { tokenizedInstructions, fnLabels };
 }
 
 //Testcases
