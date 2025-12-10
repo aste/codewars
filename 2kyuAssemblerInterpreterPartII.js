@@ -14,6 +14,7 @@ function assemblerInterpreter(program) {
   // mov x, y	Store a value (y) into register x. y could be a number or another register.
   // inc x, dec x	Increase or decrease a register’s value by 1.
   // add x, y, sub x, y, etc.	Math operations. y could be a number or a register.
+  
   // label:	Marks a location in the code for jumps or function calls.
   // jmp, je, jne, etc.	Move the instruction pointer to a label based on a condition.
   // cmp x, y	Save a comparison result to use with je, jl, etc.
@@ -26,7 +27,32 @@ function preprocess(program) {
   const codeLineByLine = program.split("\n");
   const cleanedLines = [];
   const tokenizedInstructions = [];
+  const varRegister = {};
   const fnLabels = {};
+  const fnBuiltIn = {
+    mov(arg1, arg2) {
+      varRegister[arg1] = isNaN(arg2) ? varRegister[arg2] : Number(arg2);
+    },
+    inc(arg1) {
+      varRegister[arg1] += 1;
+    },
+    dec(arg1) {
+      varRegister[arg1] -= 1;
+    },
+    add(arg1, arg2) {
+      varRegister[arg1] += isNaN(arg2) ? varRegister[arg2] : Number(arg2);
+    },
+    sub(arg1, arg2) {
+      varRegister[arg1] -= isNaN(arg2) ? varRegister[arg2] : Number(arg2);
+    },
+    mul(arg1, arg2) {
+      varRegister[arg1] *= isNaN(arg2) ? varRegister[arg2] : Number(arg2);
+    },
+    div(arg1, arg2) {
+      varRegister[arg1] /= isNaN(arg2) ? varRegister[arg2] : Number(arg2);
+    },
+    
+  };
 
   for (let i = 0; i < codeLineByLine.length; i++) {
     codeLineByLine[i] = codeLineByLine[i].trim();
@@ -38,16 +64,11 @@ function preprocess(program) {
 
     if (codeLineByLine[i].includes(":")) {
       let fnLabel = codeLineByLine[i].split(":")[0].trim();
-      fnLabels[fnLabel] = cleanedLines.length + 1;
     }
 
+    fnLabels[fnLabel] = cleanedLines.length + 1;
     if (codeLineByLine[i] !== "") cleanedLines.push(codeLineByLine[i]);
   }
-
-  console.log("fnLabels");
-  console.log(fnLabels);
-  console.log("cleanedLines");
-  console.log(cleanedLines);
 
   for (let i = 0; i < cleanedLines.length; i++) {
     let lineToProcess = cleanedLines[i].split("");
@@ -111,14 +132,15 @@ function preprocess(program) {
     tokenizedInstructions.push(tokensForLine);
   }
 
+  console.log(fnLabels);
   console.log("cleanedLines");
+  console.log("fnLabels");
   console.log(cleanedLines);
   console.log("tokenizedInstructions");
   console.log(tokenizedInstructions);
-
-  return { tokenizedInstructions, fnLabels };
 }
 
+return { tokenizedInstructions, fnLabels };
 //Testcases
 
 // Simple function
