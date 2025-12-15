@@ -1,9 +1,19 @@
 function assemblerInterpreter(program) {
   preprocess(program);
-
+  // ------------- Done -------------
   // Preprocess
   //    Identify and map labels, to line numbers for jumps and calls
   //    tokenize each instruction into a command + argument(s)
+  
+  // Interpret
+  // mov x, y	Store a value (y) into register x. y could be a number or another register.
+  // inc x, dec x	Increase or decrease a register’s value by 1.
+  // add x, y, sub x, y, etc.	Math operations. y could be a number or a register.
+
+
+
+  // ------------- To Do ------------- 
+  // Preprocess
 
   // Interpret
   //    Initialize registers, output buffer, call stack, etc.
@@ -11,10 +21,7 @@ function assemblerInterpreter(program) {
   //    At each line, dispatch the instruction to a helper function
 
   // Instruction Handlers
-  // mov x, y	Store a value (y) into register x. y could be a number or another register.
-  // inc x, dec x	Increase or decrease a register’s value by 1.
-  // add x, y, sub x, y, etc.	Math operations. y could be a number or a register.
-  
+
   // label:	Marks a location in the code for jumps or function calls.
   // jmp, je, jne, etc.	Move the instruction pointer to a label based on a condition.
   // cmp x, y	Save a comparison result to use with je, jl, etc.
@@ -51,7 +58,6 @@ function preprocess(program) {
     div(arg1, arg2) {
       varRegister[arg1] /= isNaN(arg2) ? varRegister[arg2] : Number(arg2);
     },
-    
   };
 
   for (let i = 0; i < codeLineByLine.length; i++) {
